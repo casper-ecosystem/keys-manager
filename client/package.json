@@ -1,0 +1,23 @@
+{
+  "name": "casper-client-sdk-example",
+  "version": "1.0.0",
+  "description": "Examples using casper-client-sdk",
+  "main": "./src/index.js",
+  "scripts": {
+    "run": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/casper-ecosystem/casper-client-sdk-example.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/casper-ecosystem/casper-client-sdk-example/issues"
+  },
+  "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
+  "dependencies": {
+    "casper-client-sdk": "1.0.7"
+  }
+}
