@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
   "dependencies": {
-    "casper-client-sdk": "1.0.7"
+    "casper-client-sdk": "1.0.8",
+    "rpc-client-js": "^1.0.2"
   }
 }

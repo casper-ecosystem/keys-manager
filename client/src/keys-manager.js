@@ -19,12 +19,12 @@ let publicKeyPath = baseKeyPath + "public_key.pem";
 let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 
 // Define two keys that will be used.
-// var seed = new Uint8Array([21,31]);
-// let masterKey = client.newHdWallet(seed);
-// let firstAccount = masterKey.deriveIndex(1);
-// let secondAccount = masterKey.deriveIndex(2);
-let firstAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
-let secondAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
+var seed = new Uint8Array([21,31]);
+let masterKey = client.newHdWallet(seed);
+let firstAccount = masterKey.deriveIndex(1);
+let secondAccount = masterKey.deriveIndex(2);
+// let firstAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
+// let secondAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
 
 
 
@@ -97,7 +97,7 @@ let secondAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
 
 async function sendDeploy(deploy, fromAccount, signingKeys) {
     for(let key of signingKeys){
-        console.log(`Signed by: ${toAccountHashString(fromAccount.publicKey)}`);
+        console.log(`Signed by: ${toAccountHashString(key.publicKey)}`);
         deploy = client.signDeploy(deploy, key);
     }
     deployHash = await client.putDeploy(deploy);
