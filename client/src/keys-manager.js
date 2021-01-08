@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 let {Client, HTTPTransport, RequestManager} = require('rpc-client-js');
-let {CasperClient, CasperServiceByJsonRPC, PublicKey, Keys, RuntimeArgs, CLValue, DeployUtil, AccountHash, KeyValue} = require('casper-client-sdk');
+let {CasperClient, CasperServiceByJsonRPC, PublicKey, Keys, RuntimeArgs, CLValue, DeployUtil, AccountHash, KeyValue, CLTypedAndToBytesHelper} = require('casper-client-sdk');
 const { time } = require('console');
 
 let nodeUrl = 'http://localhost:40101/rpc';
@@ -51,49 +51,61 @@ let secondAccount = masterKey.deriveIndex(2);
     // Deployment Threshold should be set to 1.
     // Key Management Threshold should be set to 1.
     console.log("\n0. Initial settings.\n");
+    
+    deploy = buildManagerDeploy();
+    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
     await printAccount();
     
     // 1. Set faucet's weight to 3
-    console.log("\n1. Set faucet's weight to 3\n");
-    deploy = buildSetKeyWeightDeploy(faucetAccount, 3);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // console.log("\n1. Set faucet's weight to 3\n");
+    // deploy = buildSetKeyWeightDeploy(faucetAccount, 3);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
 
-    // 2. Set Keys Management Threshold to 3.
-    console.log("\n2. Set Keys Management Threshold to 3\n");
-    deploy = buildSetKeyManagementThresholdDeploy(3);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 2. Set Keys Management Threshold to 3.
+    // console.log("\n2. Set Keys Management Threshold to 3\n");
+    // deploy = buildSetKeyManagementThresholdDeploy(3);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
 
-    // 3. Set Deploy Threshold to 2.
-    console.log("\n3. Set Deploy Threshold to 2.\n");
-    deploy = buildSetDeploymentThresholdDeploy(2);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 3. Set Deploy Threshold to 2.
+    // console.log("\n3. Set Deploy Threshold to 2.\n");
+    // deploy = buildSetDeploymentThresholdDeploy(2);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
     
-    // 4. Add first new key with weight 1.
-    console.log("\n4. Add first new key with weight 1.\n");
-    deploy = buildSetKeyWeightDeploy(firstAccount, 1);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 4. Add first new key with weight 1.
+    // console.log("\n4. Add first new key with weight 1.\n");
+    // deploy = buildSetKeyWeightDeploy(firstAccount, 1);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
     
-    // 5. Add second new key with weight 1.
-    console.log("\n5. Add second new key with weight 1.\n");
-    deploy = buildSetKeyWeightDeploy(secondAccount, 1);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 5. Add second new key with weight 1.
+    // console.log("\n5. Add second new key with weight 1.\n");
+    // deploy = buildSetKeyWeightDeploy(secondAccount, 1);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
     
-    // 6. Make a transfer from faucet using only both accounts.
-    console.log("\n6. Make a transfer from faucet using only both accounts.\n");
-    deploy = buildTransferDeploy(faucetAccount, firstAccount, 1);
-    await sendDeploy(deploy, faucetAccount, [firstAccount, secondAccount]);
+    // // 6. Make a transfer from faucet using only both accounts.
+    // console.log("\n6. Make a transfer from faucet using only both accounts.\n");
+    // deploy = buildTransferDeploy(faucetAccount, firstAccount, 1);
+    // await sendDeploy(deploy, faucetAccount, [firstAccount, secondAccount]);
 
-    // 7. Remove first account.
-    console.log("\n7. Remove the first account\n");
-    deploy = buildSetKeyWeightDeploy(firstAccount, 0);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 7. Remove first account.
+    // console.log("\n7. Remove the first account\n");
+    // deploy = buildSetKeyWeightDeploy(firstAccount, 0);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
 
-    // 8. Remove second account.
-    console.log("\n8. Remove the second account\n");
-    deploy = buildSetKeyWeightDeploy(secondAccount, 0);
-    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
+    // // 8. Remove second account.
+    // console.log("\n8. Remove the second account\n");
+    // deploy = buildSetKeyWeightDeploy(secondAccount, 0);
+    // await sendDeploy(deploy, faucetAccount, [faucetAccount]);
 
 })();
+
+function buildManagerDeploy() {
+    return buildKeyManagerDeploy(faucetAccount, {
+        // deployment_threshold: CLValue.fromU8(2),
+        accounts: CLValue.fromList([
+            CLTypedAndToBytesHelper.bytes(faucetAccount.accountHash())
+        ])
+    });
+}
 
 async function sendDeploy(deploy, fromAccount, signingKeys) {
     for(let key of signingKeys){
@@ -106,7 +118,7 @@ async function sendDeploy(deploy, fromAccount, signingKeys) {
 }
 
 async function getDeploy(deployHash) {
-    let i = 10;
+    let i = 20;
     while (i != 0) {
         try {
             return await client.getDeployByHash(deployHash);
@@ -115,7 +127,7 @@ async function getDeploy(deployHash) {
             await sleep(1000);
         }
     }
-    throw Error('Tried 10 times. Something\'s wrong');
+    throw Error('Tried 20 times. Something\'s wrong');
 }
 
 function buildSetKeyWeightDeploy(account, weight) {
