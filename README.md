@@ -24,4 +24,5 @@ $ npm install
 ```bash
 $ cd client
 $ node src/keys-manager.js
+$ node src/keys-manager-set-all.js
 ```
