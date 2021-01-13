@@ -16,20 +16,30 @@ use api::Api;
 
 pub fn execute() {
     let result = match Api::from_args() {
-        Api::SetKeyWeight(key, weight) => {
-            if weight.value() == 0 {
-                remove_key_if_exists(key)
-            } else {
-                add_or_update_key(key, weight)
-            }
-        }
+        Api::SetKeyWeight(key, weight) => set_key_weight(key, weight),
         Api::SetDeploymentThreshold(threshold) => set_threshold(ActionType::Deployment, threshold),
         Api::SetKeyManagementThreshold(threshold) => {
             set_threshold(ActionType::KeyManagement, threshold)
         }
+        Api::SetAll(deployment_thereshold, key_management_threshold, accounts, weights) => {
+            for (account, weight) in accounts.iter().zip(weights) {
+                set_key_weight(account.clone(), weight).unwrap_or_revert();
+            }
+            set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();
+            set_threshold(ActionType::Deployment, deployment_thereshold).unwrap_or_revert();
+            Ok(())
+        }
     };
     result.unwrap_or_revert()
 }
+
+fn set_key_weight(key: AccountHash, weight: Weight) -> Result<(), Error> {
+    if weight.value() == 0 {
+        remove_key_if_exists(key)
+    } else {
+        add_or_update_key(key, weight)
+    }
+} 
 
 fn add_or_update_key(key: AccountHash, weight: Weight) -> Result<(), Error> {
     match account::update_associated_key(key, weight) {

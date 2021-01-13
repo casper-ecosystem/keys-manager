@@ -50,8 +50,8 @@ let secondAccount = masterKey.deriveIndex(2);
     // There should be only one associated key (facuet) with weight 1.
     // Deployment Threshold should be set to 1.
     // Key Management Threshold should be set to 1.
-    console.log("\n0. Initial settings.\n");
-    await printAccount();
+    // console.log("\n0. Initial settings.\n");
+    // await printAccount();
     
     // 1. Set faucet's weight to 3
     console.log("\n1. Set faucet's weight to 3\n");
@@ -100,7 +100,12 @@ async function sendDeploy(deploy, fromAccount, signingKeys) {
         console.log(`Signed by: ${toAccountHashString(key.publicKey)}`);
         deploy = client.signDeploy(deploy, key);
     }
-    deployHash = await client.putDeploy(deploy);
+    let deployHash;
+    try {
+        deployHash = await client.putDeploy(deploy);
+    } catch (e) {
+        console.log(e);
+    }
     await printDeploy(deployHash);
     await printAccount();
 }
