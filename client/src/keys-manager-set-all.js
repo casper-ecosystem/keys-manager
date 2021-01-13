@@ -39,7 +39,7 @@ let masterKey = client.newHdWallet(seed);
     await printAccount(mainAccount);
 
     let deployThereshold = 2;
-    let keyManagementThreshold = 4;
+    let keyManagementThreshold = 2;
     let accounts = [
         { publicKey: firstAccount.publicKey, weight: 2 }, 
         { publicKey: secondAccount.publicKey, weight: 2 },
@@ -49,6 +49,11 @@ let masterKey = client.newHdWallet(seed);
     console.log("\n[x] Update keys deploy:");
     let deploy = setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
     await sendDeploy(deploy, [mainAccount]);
+    await printAccount(mainAccount);
+
+    console.log("\n[x] Update second account deploy:");
+    deploy = buildSetKeyWeightDeploy(mainAccount, secondAccount, 2);
+    await sendDeploy(deploy, [secondAccount]);
     
     await printAccount(mainAccount);
 })();
@@ -78,6 +83,14 @@ function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWe
         key_management_threshold: CLValue.fromU8(keyManagementThreshold),
         accounts: CLValue.fromList(accounts),
         weights: CLValue.fromList(weights),
+    });
+}
+
+function buildSetKeyWeightDeploy(fromAccount, account, weight) {
+    return buildKeyManagerDeploy(fromAccount, {
+        action: CLValue.fromString("set_key_weight"),
+        account: CLValue.fromBytes(account.accountHash()),
+        weight: CLValue.fromU8(weight)
     });
 }
 
