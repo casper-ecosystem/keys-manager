@@ -73,11 +73,11 @@ function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWe
     let weights = accountWeights.map(x => CLTypedAndToBytesHelper.u8(x.weight));
 
     return buildKeyManagerDeploy(fromAccount, {
-        action: CLValue.fromString("set_all"),
-        deployment_thereshold: CLValue.fromU8(deployThereshold),
-        key_management_threshold: CLValue.fromU8(keyManagementThreshold),
-        accounts: CLValue.fromList(accounts),
-        weights: CLValue.fromList(weights),
+        action: CLValue.string("set_all"),
+        deployment_thereshold: CLValue.u8(deployThereshold),
+        key_management_threshold: CLValue.u8(keyManagementThreshold),
+        accounts: CLValue.list(accounts),
+        weights: CLValue.list(weights),
     });
 }
 

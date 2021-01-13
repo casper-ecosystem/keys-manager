@@ -125,23 +125,23 @@ async function getDeploy(deployHash) {
 
 function buildSetKeyWeightDeploy(account, weight) {
     return buildKeyManagerDeploy(faucetAccount, {
-        action: CLValue.fromString("set_key_weight"),
-        account: CLValue.fromBytes(account.accountHash()),
-        weight: CLValue.fromU8(weight)
+        action: CLValue.string("set_key_weight"),
+        account: CLValue.byteArray(account.accountHash()),
+        weight: CLValue.u8(weight)
     });
 }
 
 function buildSetDeploymentThresholdDeploy(weight) {
     return buildKeyManagerDeploy(faucetAccount, {
-        action: CLValue.fromString("set_deployment_threshold"),
-        weight: CLValue.fromU8(weight)
+        action: CLValue.string("set_deployment_threshold"),
+        weight: CLValue.u8(weight)
     });
 }
 
 function buildSetKeyManagementThresholdDeploy(weight) {
     return buildKeyManagerDeploy(faucetAccount, {
-        action: CLValue.fromString("set_key_management_threshold"),
-        weight: CLValue.fromU8(weight)
+        action: CLValue.string("set_key_management_threshold"),
+        weight: CLValue.u8(weight)
     });
 }
 
