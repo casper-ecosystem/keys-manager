@@ -38,7 +38,7 @@ let masterKey = client.newHdWallet(seed);
 
     await printAccount(mainAccount);
 
-    let deployThereshold = 2;
+    let deployThreshold = 2;
     let keyManagementThreshold = 2;
     let accounts = [
         { publicKey: firstAccount.publicKey, weight: 2 }, 
@@ -47,13 +47,17 @@ let masterKey = client.newHdWallet(seed);
     ]
 
     console.log("\n[x] Update keys deploy:");
-    let deploy = setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
+    let deploy = setAll(mainAccount, deployThreshold, keyManagementThreshold, accounts);
     await sendDeploy(deploy, [mainAccount]);
     await printAccount(mainAccount);
 
-    console.log("\n[x] Update second account deploy:");
-    deploy = buildSetKeyWeightDeploy(mainAccount, secondAccount, 2);
-    await sendDeploy(deploy, [secondAccount]);
+    accounts = [
+        { publicKey: mainAccount.publicKey, weight: 2 }
+    ]
+    deploy = setAll(mainAccount, deployThreshold, keyManagementThreshold, accounts);
+    console.log("\n[x] Lockout account:");
+    deploy = buildSetKeyWeightDeploy(mainAccount, mainAccount, 2);
+    await sendDeploy(deploy, [firstAccount]);
     
     await printAccount(mainAccount);
 })();
@@ -73,13 +77,13 @@ async function fund(account) {
     await sendDeploy(deploy, [faucetAccount]);
 }
 
-function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWeights) {
+function setAll(fromAccount, deployThreshold, keyManagementThreshold, accountWeights) {
     let accounts = accountWeights.map(x => CLTypedAndToBytesHelper.bytes(x.publicKey.toAccountHash()));
     let weights = accountWeights.map(x => CLTypedAndToBytesHelper.u8(x.weight));
 
     return buildKeyManagerDeploy(fromAccount, {
         action: CLValue.fromString("set_all"),
-        deployment_thereshold: CLValue.fromU8(deployThereshold),
+        deployment_thereshold: CLValue.fromU8(deployThreshold),
         key_management_threshold: CLValue.fromU8(keyManagementThreshold),
         accounts: CLValue.fromList(accounts),
         weights: CLValue.fromList(weights),
