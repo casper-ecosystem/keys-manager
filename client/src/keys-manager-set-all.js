@@ -83,7 +83,7 @@ function setAll(fromAccount, deployThreshold, keyManagementThreshold, accountWei
 
     return buildKeyManagerDeploy(fromAccount, {
         action: CLValue.fromString("set_all"),
-        deployment_thereshold: CLValue.fromU8(deployThreshold),
+        deployment_threshold: CLValue.fromU8(deployThreshold),
         key_management_threshold: CLValue.fromU8(keyManagementThreshold),
         accounts: CLValue.fromList(accounts),
         weights: CLValue.fromList(weights),

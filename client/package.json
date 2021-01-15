@@ -6,8 +6,8 @@
   "scripts": {
     "run": "node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "keys-manager": "FAUCET_PATH=/home/ethilios/CasperLabs/casper-node/utils/nctl/assets/net-1/faucet/ node src/keys-manager.js",
-    "keys-manager-all": "FAUCET_PATH=/home/ethilios/CasperLabs/casper-node/utils/nctl/assets/net-1/faucet/ node src/keys-manager-set-all.js"
+    "keys-manager": "FAUCET_PATH=/path/to/your/faucet/ node src/keys-manager.js",
+    "keys-manager-all": "FAUCET_PATH=/path/to/your/faucet/ node src/keys-manager-set-all.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
   "dependencies": {
-    "casper-client-sdk": "1.0.8",
+    "casper-client-sdk": "1.0.9",
     "rpc-client-js": "^1.0.2"
   }
 }
