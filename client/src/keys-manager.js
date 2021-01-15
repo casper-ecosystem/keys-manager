@@ -13,7 +13,7 @@ let networkName = 'casper-net-1';
 let client = new CasperClient(nodeUrl, eventStoreUrl);
 
 // Load the faucet key.
-let baseKeyPath = "/home/ziel/workspace/casperlabs/casper-node/utils/nctl/assets/net-1/faucet/";
+let baseKeyPath = process.env.FAUCET_PATH;
 let privateKeyPath = baseKeyPath + "secret_key.pem";
 let publicKeyPath = baseKeyPath + "public_key.pem";
 let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
