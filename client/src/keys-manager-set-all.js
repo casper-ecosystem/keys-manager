@@ -23,7 +23,6 @@ let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 var seed = new Uint8Array(randomSeed());
 let masterKey = client.newHdWallet(seed);
 
-
 (async function () {
     let mainAccount = masterKey.deriveIndex(1);
     let firstAccount = masterKey.deriveIndex(2);
@@ -35,7 +34,6 @@ let masterKey = client.newHdWallet(seed);
 
     console.log("\n[x] Funding main account:");
     await fund(mainAccount);
-
     await printAccount(mainAccount);
 
     let deployThereshold = 2;
@@ -49,7 +47,6 @@ let masterKey = client.newHdWallet(seed);
     console.log("\n[x] Update keys deploy:");
     let deploy = setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
     await sendDeploy(deploy, [mainAccount]);
-    
     await printAccount(mainAccount);
 })();
 
@@ -62,9 +59,9 @@ async function fund(account) {
         faucetAccount.publicKey,
         networkName
     );
-    let session = new DeployUtil.Transfer(10000000000000, account.publicKey)
+    let session = DeployUtil.ExecutableDeployItem.newTransfer(10000000000000, account.publicKey);
     let payment = DeployUtil.standardPayment(100000000000);
-    let deploy = client.makeDeploy(deployParams, session, payment);
+    let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
     await sendDeploy(deploy, [faucetAccount]);
 }
 
@@ -109,9 +106,9 @@ function buildKeyManagerDeploy(baseAccount, args) {
         networkName
     );
     var session = new Uint8Array(fs.readFileSync(wasmPath, null).buffer);
-    let runtimeArgs = RuntimeArgs.fromMap(args).toBytes();
+    let runtimeArgs = RuntimeArgs.fromMap(args);
 
-    let sessionModule = new DeployUtil.ModuleBytes(
+    let sessionModule = DeployUtil.ExecutableDeployItem.newModuleBytes(
         session,
         runtimeArgs
     );
@@ -137,7 +134,7 @@ async function getAccount(publicKey) {
         stateRootHash,
         'account-hash-' + toAccountHashString(publicKey),
         []
-    ).then(res => res.stored_value.Account);
+    ).then(res => res.Account);
     return account;
 }
 

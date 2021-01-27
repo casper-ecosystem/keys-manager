@@ -1,8 +1,6 @@
 const fs = require('fs');
 
-let {Client, HTTPTransport, RequestManager} = require('rpc-client-js');
-let {CasperClient, CasperServiceByJsonRPC, PublicKey, Keys, RuntimeArgs, CLValue, DeployUtil, AccountHash, KeyValue} = require('casper-client-sdk');
-const { time } = require('console');
+let {CasperClient, CasperServiceByJsonRPC, Keys, RuntimeArgs, CLValue, DeployUtil } = require('casper-client-sdk');
 
 let nodeUrl = 'http://localhost:40101/rpc';
 let eventStoreUrl = 'http://localhost:3000';
@@ -21,26 +19,25 @@ let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 // Define two keys that will be used.
 var seed = new Uint8Array([21,31]);
 let masterKey = client.newHdWallet(seed);
-let firstAccount = masterKey.deriveIndex(1);
-let secondAccount = masterKey.deriveIndex(2);
+let mainAccount = masterKey.deriveIndex(1);
+let firstAccount = masterKey.deriveIndex(2);
+let secondAccount = masterKey.deriveIndex(3);
 // let firstAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
 // let secondAccount = client.newKeyPair(Keys.SignatureAlgorithm.Ed25519);
 
-
-
 (async function () {
     
-    // In this example the 2 additional accounts will be added to the faucet
-    // account to perform deploys, but they will not be able to add another
-    // accounts. This will remain available only to the faucet account. 
+    // In this example the 2 additional accounts will be added to the mainAccount
+    // to perform deploys, but they will not be able to add another
+    // accounts. 
     
     // To achive the task, we will:
-    // 1. Set faucet's weight to 3.
+    // 1. Set mainAccount's weight to 3.
     // 2. Set Keys Management Threshold to 3.
     // 3. Set Deploy Threshold to 2.
     // 4. Add first new key with weight 1.
     // 5. Add second new key with weight 1.
-    // 6. Make a transfer from faucet using only both accounts.
+    // 6. Make a transfer from mainAccount using only both accounts.
     // 7. Remove first account.
     // 8. Remove second account.
 
@@ -50,10 +47,14 @@ let secondAccount = masterKey.deriveIndex(2);
     // There should be only one associated key (facuet) with weight 1.
     // Deployment Threshold should be set to 1.
     // Key Management Threshold should be set to 1.
-    // console.log("\n0. Initial settings.\n");
-    // await printAccount();
+    console.log("\n0. Fund main account.\n");
+    deploy = buildTransferDeploy(faucetAccount, mainAccount, 10000000000000);
+    await sendDeploy(deploy, faucetAccount, [faucetAccount]);
     
-    // 1. Set faucet's weight to 3
+    console.log("Main account:");
+    await printAccount(mainAccount);
+
+    // 1. Set mainAccount's weight to 3
     console.log("\n1. Set faucet's weight to 3\n");
     deploy = buildSetKeyWeightDeploy(faucetAccount, 3);
     await sendDeploy(deploy, faucetAccount, [faucetAccount]);
@@ -107,7 +108,7 @@ async function sendDeploy(deploy, fromAccount, signingKeys) {
         console.log(e);
     }
     await printDeploy(deployHash);
-    await printAccount();
+    await printAccount(fromAccount);
 }
 
 async function getDeploy(deployHash) {
@@ -152,9 +153,9 @@ function buildKeyManagerDeploy(baseAccount, args) {
         networkName
     );
     var session = new Uint8Array(fs.readFileSync(wasmPath, null).buffer);
-    let runtimeArgs = RuntimeArgs.fromMap(args).toBytes();
+    let runtimeArgs = RuntimeArgs.fromMap(args);
 
-    let sessionModule = new DeployUtil.ModuleBytes(
+    let sessionModule = DeployUtil.ExecutableDeployItem.newModuleBytes(
         session,
         runtimeArgs
     );
@@ -168,7 +169,7 @@ function buildTransferDeploy(fromAccount, toAccount, amount) {
         fromAccount.publicKey,
         networkName
     );
-    let transferParams = new DeployUtil.Transfer(
+    let transferParams = DeployUtil.ExecutableDeployItem.newTransfer(
         amount,
         toAccount.publicKey,
         null,
@@ -184,9 +185,9 @@ async function printDeploy(deployHash) {
     console.log(await getDeploy(deployHash));
 }
 
-async function printAccount() {
+async function printAccount(account) {
     console.log("Current state of the account:");
-    console.log(await getAccount(faucetAccount.publicKey));
+    console.log(await getAccount(account.publicKey));
 }
 
 // This function will be part of CasperClient in the next release.
@@ -197,7 +198,7 @@ async function getAccount(publicKey) {
         stateRootHash,
         'account-hash-' + toAccountHashString(publicKey),
         []
-    ).then(res => res.stored_value.Account);
+    ).then(res => res.Account);
     return account;
 }
 
