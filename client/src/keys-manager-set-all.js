@@ -1,40 +1,18 @@
-const fs = require('fs');
-
-let {Client, HTTPTransport, RequestManager} = require('rpc-client-js');
-let {CasperClient, CasperServiceByJsonRPC, PublicKey, Keys, RuntimeArgs, CLValue, DeployUtil, AccountHash, KeyValue, CLTypedAndToBytesHelper} = require('casper-client-sdk');
-const { time } = require('console');
-const { send } = require('process');
-
-let nodeUrl = 'http://localhost:40101/rpc';
-let eventStoreUrl = 'http://localhost:3000';
-let wasmPath = '../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm';
-let networkName = 'casper-net-1';
-
-// Create a client connect to Casper Node
-let client = new CasperClient(nodeUrl, eventStoreUrl);
-
-// Load the faucet key.
-let baseKeyPath = "/home/ziel/workspace/casperlabs/casper-node/utils/nctl/assets/net-1/faucet/";
-let privateKeyPath = baseKeyPath + "secret_key.pem";
-let publicKeyPath = baseKeyPath + "public_key.pem";
-let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
-
-// Define two keys that will be used.
-var seed = new Uint8Array(randomSeed());
-let masterKey = client.newHdWallet(seed);
+const utils = require('./utils');
 
 (async function () {
+    let masterKey = utils.randomMasterKey();
     let mainAccount = masterKey.deriveIndex(1);
     let firstAccount = masterKey.deriveIndex(2);
     let secondAccount = masterKey.deriveIndex(3);
 
-    console.log("Main account: " + toAccountHashString(mainAccount.publicKey));
-    console.log("First account: " + toAccountHashString(firstAccount.publicKey));
-    console.log("Second account: " + toAccountHashString(secondAccount.publicKey));
+    console.log("Main account: " + utils.toAccountHashString(mainAccount.publicKey));
+    console.log("First account: " + utils.toAccountHashString(firstAccount.publicKey));
+    console.log("Second account: " + utils.toAccountHashString(secondAccount.publicKey));
 
     console.log("\n[x] Funding main account:");
-    await fund(mainAccount);
-    await printAccount(mainAccount);
+    await utils.fund(mainAccount);
+    await utils.printAccount(mainAccount);
 
     let deployThereshold = 2;
     let keyManagementThreshold = 4;
@@ -45,103 +23,7 @@ let masterKey = client.newHdWallet(seed);
     ]
 
     console.log("\n[x] Update keys deploy:");
-    let deploy = setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
-    await sendDeploy(deploy, [mainAccount]);
-    await printAccount(mainAccount);
+    let deploy = utils.keys.setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
+    await utils.sendDeploy(deploy, [mainAccount]);
+    await utils.printAccount(mainAccount);
 })();
-
-function randomSeed() {
-    return Array.from({length: 40}, () => Math.floor(Math.random() * 128))
-}
-
-async function fund(account) {
-    let deployParams = new DeployUtil.DeployParams(
-        faucetAccount.publicKey,
-        networkName
-    );
-    let session = DeployUtil.ExecutableDeployItem.newTransfer(10000000000000, account.publicKey);
-    let payment = DeployUtil.standardPayment(100000000000);
-    let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
-    await sendDeploy(deploy, [faucetAccount]);
-}
-
-function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWeights) {
-    let accounts = accountWeights.map(x => CLTypedAndToBytesHelper.bytes(x.publicKey.toAccountHash()));
-    let weights = accountWeights.map(x => CLTypedAndToBytesHelper.u8(x.weight));
-
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValue.string("set_all"),
-        deployment_thereshold: CLValue.u8(deployThereshold),
-        key_management_threshold: CLValue.u8(keyManagementThreshold),
-        accounts: CLValue.list(accounts),
-        weights: CLValue.list(weights),
-    });
-}
-
-async function sendDeploy(deploy, signingKeys) {
-    for(let key of signingKeys){
-        console.log(`Signed by: ${toAccountHashString(key.publicKey)}`);
-        deploy = client.signDeploy(deploy, key);
-    }
-    let deployHash = await client.putDeploy(deploy);
-    await printDeploy(deployHash);
-}
-
-async function getDeploy(deployHash) {
-    let i = 10;
-    while (i != 0) {
-        try {
-            return await client.getDeployByHash(deployHash);
-        } catch(e) {
-            i--;
-            await sleep(1000);
-        }
-    }
-    throw Error('Tried 10 times. Something\'s wrong');
-}
-
-function buildKeyManagerDeploy(baseAccount, args) {
-    let deployParams = new DeployUtil.DeployParams(
-        baseAccount.publicKey,
-        networkName
-    );
-    var session = new Uint8Array(fs.readFileSync(wasmPath, null).buffer);
-    let runtimeArgs = RuntimeArgs.fromMap(args);
-
-    let sessionModule = DeployUtil.ExecutableDeployItem.newModuleBytes(
-        session,
-        runtimeArgs
-    );
-    let payment = DeployUtil.standardPayment(100000000000);
-    return client.makeDeploy(deployParams, sessionModule, payment);
-}
-
-async function printDeploy(deployHash) {
-    console.log("Deploy hash: " + deployHash);
-    console.log("Deploy result:");
-    console.log(await getDeploy(deployHash));
-}
-
-async function printAccount(account) {
-    console.log("\n[x] Current state of the account:");
-    console.log(await getAccount(account.publicKey));
-}
-
-async function getAccount(publicKey) {
-    let c = new CasperServiceByJsonRPC(nodeUrl);
-    let stateRootHash = (await c.getLatestBlockInfo()).block.header.state_root_hash;
-    let account = await c.getBlockState(
-        stateRootHash,
-        'account-hash-' + toAccountHashString(publicKey),
-        []
-    ).then(res => res.Account);
-    return account;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function toAccountHashString(publicKey) {
-    return Buffer.from(publicKey.toAccountHash()).toString('hex');
-}
