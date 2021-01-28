@@ -10,20 +10,24 @@ const utils = require('./utils');
     console.log("First account: " + utils.toAccountHashString(firstAccount.publicKey));
     console.log("Second account: " + utils.toAccountHashString(secondAccount.publicKey));
 
-    console.log("\n[x] Funding main account:");
+    console.log("\n[x] Funding main account.");
     await utils.fund(mainAccount);
     await utils.printAccount(mainAccount);
 
     let deployThereshold = 2;
-    let keyManagementThreshold = 4;
+    let keyManagementThreshold = 2;
     let accounts = [
-        { publicKey: firstAccount.publicKey, weight: 2 }, 
-        { publicKey: secondAccount.publicKey, weight: 2 },
-        { publicKey: mainAccount.publicKey, weight: 0 }
+        { publicKey: mainAccount.publicKey, weight: 1 },
+        { publicKey: firstAccount.publicKey, weight: 1 }, 
     ]
 
-    console.log("\n[x] Update keys deploy:");
+    console.log("\n[x] Update keys deploy.");
     let deploy = utils.keys.setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
     await utils.sendDeploy(deploy, [mainAccount]);
+    await utils.printAccount(mainAccount);
+
+    console.log("\n[x] Make transfer.");
+    deploy = utils.transferDeploy(mainAccount, secondAccount, 10);
+    await utils.sendDeploy(deploy, [mainAccount, firstAccount]);
     await utils.printAccount(mainAccount);
 })();
