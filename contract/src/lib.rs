@@ -1,10 +1,11 @@
 use casper_contract::{
-    contract_api::{account},
+    contract_api::{account, system, runtime},
     unwrap_or_revert::UnwrapOrRevert
 };
 use casper_types::{
+    auction, PublicKey, U512, RuntimeArgs, runtime_args,
     account::{
-        AccountHash, Weight, ActionType, AddKeyFailure, RemoveKeyFailure, SetThresholdFailure, UpdateKeyFailure
+        AccountHash, Weight, ActionType, AddKeyFailure, RemoveKeyFailure, SetThresholdFailure, UpdateKeyFailure,
     }
 };
 
@@ -27,6 +28,14 @@ pub fn execute() {
             }
             set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();
             set_threshold(ActionType::Deployment, deployment_thereshold).unwrap_or_revert();
+            Ok(())
+        }
+        Api::Delegate(delegator, validator, amount) => {
+            delegate(delegator, validator, amount);
+            Ok(())
+        }
+        Api::Undelegate(delegator, validator, amount) => {
+            undelegate(delegator, validator, amount);
             Ok(())
         }
     };
@@ -78,4 +87,23 @@ fn set_threshold(permission_level: ActionType, threshold: Weight) -> Result<(), 
         Err(SetThresholdFailure::PermissionDeniedError) => Err(Error::PermissionDenied),
         Err(SetThresholdFailure::InsufficientTotalWeight) => Err(Error::InsufficientTotalWeight),
     }
+}
+
+fn delegate(delegator: PublicKey, validator: PublicKey, amount: U512) {
+    call_auction(auction::METHOD_DELEGATE, delegator, validator, amount);
+}
+
+
+fn undelegate(delegator: PublicKey, validator: PublicKey, amount: U512) {
+    call_auction(auction::METHOD_UNDELEGATE, delegator, validator, amount);
+}
+
+fn call_auction(method: &str, delegator: PublicKey, validator: PublicKey, amount: U512) {
+    let contract_hash = system::get_auction();
+    let args = runtime_args! {
+        auction::ARG_DELEGATOR => delegator,
+        auction::ARG_VALIDATOR => validator,
+        auction::ARG_AMOUNT => amount,
+    };
+    runtime::call_contract::<U512>(contract_hash, method, args);
 }

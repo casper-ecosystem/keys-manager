@@ -35,11 +35,17 @@ async function sendDeploy(deploy, signingKeys) {
 async function getDeploy(deployHash) {
     let i = 10;
     while (i != 0) {
-        try {
-            return await client.getDeployByHash(deployHash);
-        } catch(e) {
+        let [deploy, raw] = await client.getDeployByHashFromRPC(deployHash);
+        if (raw.execution_results.length !== 0){
+            if (raw.execution_results[0].result.Success) {
+                return deploy;
+            } else {
+                throw Error("Contract execution: " + raw.execution_results[0].result.Failure.error_message);
+            }
+        } else {
             i--;
             await sleep(1000);
+            continue;
         }
     }
     throw Error('Tried 10 times. Something\'s wrong');
@@ -79,7 +85,6 @@ function randomMasterKey() {
     var seed = new Uint8Array(randomSeed());
     return client.newHdWallet(seed);
 }
-
 
 // Key manager
 
@@ -134,6 +139,31 @@ function buildKeyManagerDeploy(baseAccount, args) {
     return DeployUtil.makeDeploy(deployParams, sessionModule, payment);
 }
 
+// Auction
+
+function delegateDeploy(fromAccount, validator, amount) {
+    return buildKeyManagerDeploy(fromAccount, {
+        action: CLValue.string("delegate"),
+        delegator: CLValue.publicKey(fromAccount.publicKey),
+        validator: CLValue.publicKey(validator),
+        amount: CLValue.u512(amount)
+    });
+}
+
+function undelegateDeploy(fromAccount, validator, amount) {
+    return buildKeyManagerDeploy(fromAccount, {
+        action: CLValue.string("delegate"),
+        delegator: CLValue.publicKey(fromAccount.publicKey),
+        validator: CLValue.publicKey(validator),
+        amount: CLValue.u512(amount)
+    });
+}
+
+async function auctionInfo() {
+    let client = new CasperServiceByJsonRPC(nodeUrl);
+    return await client.getValidatorsInfo();
+}
+
 // Funding
 
 function transferDeploy(fromAccount, toAccount, amount) {
@@ -154,6 +184,27 @@ async function fund(account) {
     await sendDeploy(deploy, [faucetAccount]);
 }
 
+// Faucet
+
+async function callStoredFaucet(account) {
+    let deployParams = new DeployUtil.DeployParams(
+        faucetAccount.publicKey,
+        networkName
+    );
+    let args = RuntimeArgs.fromMap({
+        target: CLValue.byteArray(account.accountHash()),
+        amount: CLValue.u512(1000000000000)
+    });
+    let transferParams = DeployUtil.ExecutableDeployItem.newStoredContractByName(
+        "faucet",
+        "call_faucet",
+        args
+    );
+    let payment = DeployUtil.standardPayment(100000000000);
+    let deploy = DeployUtil.makeDeploy(deployParams, transferParams, payment);
+    console.log(DeployUtil.deployToJson(deploy));
+    await sendDeploy(deploy, [faucetAccount]);
+}
 
 module.exports = {
     'randomMasterKey': randomMasterKey,
@@ -166,6 +217,14 @@ module.exports = {
         'setDeploymentThresholdDeploy': setDeploymentThresholdDeploy,
         'setKeyManagementThresholdDeploy': setKeyManagementThresholdDeploy
     },
+    'auction': {
+        'delegateDeploy': delegateDeploy,
+        'undelegateDeploy': undelegateDeploy,
+        'auctionInfo': auctionInfo
+    },
     'sendDeploy': sendDeploy,
     'transferDeploy': transferDeploy,
+    'callStoredFaucet': callStoredFaucet,
+    'getDeploy': getDeploy
+
 }

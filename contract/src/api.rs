@@ -1,6 +1,6 @@
 use casper_contract::{contract_api::runtime};
 use casper_types::{
-    account::{AccountHash, Weight},
+    account::{AccountHash, Weight}, PublicKey, U512
 };
 
 use crate::errors::Error;
@@ -12,17 +12,24 @@ pub const ARG_DEPLOYMENT_THRESHOLD: &str = "deployment_thereshold";
 pub const ARG_KEY_MANAGEMENT_THRESHOLD: &str = "key_management_threshold";
 pub const ARG_ACCOUNTS: &str = "accounts";
 pub const ARG_WEIGHTS: &str = "weights";
+pub const ARG_AMOUNT: &str = "amount";
+pub const ARG_DELEGATOR: &str = "delegator";
+pub const ARG_VALIDATOR: &str = "validator";
 
 pub const SET_KEY_WEIGHT: &str = "set_key_weight";
 pub const SET_DEPLOYMENT_THRESHOLD: &str = "set_deployment_threshold";
 pub const SET_KEY_MANAGEMENT_THRESHOLD: &str = "set_key_management_threshold";
 pub const SET_ALL: &str = "set_all";
+pub const DELEGATE: &str = "delegate";
+pub const UNDELEGATE: &str = "undelegate";
 
 pub enum Api {
     SetKeyWeight(AccountHash, Weight),
     SetDeploymentThreshold(Weight),
     SetKeyManagementThreshold(Weight),
-    SetAll(Weight, Weight, Vec<AccountHash>, Vec<Weight>)
+    SetAll(Weight, Weight, Vec<AccountHash>, Vec<Weight>),
+    Delegate(PublicKey, PublicKey, U512),
+    Undelegate(PublicKey, PublicKey, U512)
 }
 
 fn get_action_arg() -> String {
@@ -37,6 +44,12 @@ fn get_weight_arg() -> u8 {
     runtime::get_named_arg(ARG_WEIGHT)
 }
 
+fn get_delegate_args() -> (PublicKey, PublicKey, U512) {
+    let delegator = runtime::get_named_arg(ARG_DELEGATOR);
+    let validator = runtime::get_named_arg(ARG_VALIDATOR);
+    let amount = runtime::get_named_arg(ARG_AMOUNT);
+    (delegator, validator, amount)
+}
 
 impl Api {
     pub fn from_args() -> Api {
@@ -62,6 +75,14 @@ impl Api {
                     runtime::get_named_arg(ARG_ACCOUNTS),
                     runtime::get_named_arg(ARG_WEIGHTS),
                 )
+            }
+            DELEGATE => {
+                let (delegator, validator, amount) = get_delegate_args();
+                Api::Delegate(delegator, validator, amount)
+            }
+            UNDELEGATE => {
+                let (delegator, validator, amount) = get_delegate_args();
+                Api::Undelegate(delegator, validator, amount)
             }
             _ => runtime::revert(Error::UnknownApiCommand),
         }
