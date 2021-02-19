@@ -152,7 +152,7 @@ function delegateDeploy(fromAccount, validator, amount) {
 
 function undelegateDeploy(fromAccount, validator, amount) {
     return buildKeyManagerDeploy(fromAccount, {
-        action: CLValue.string("delegate"),
+        action: CLValue.string("undelegate"),
         delegator: CLValue.publicKey(fromAccount.publicKey),
         validator: CLValue.publicKey(validator),
         amount: CLValue.u512(amount)
