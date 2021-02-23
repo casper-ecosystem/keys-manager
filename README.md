@@ -28,7 +28,7 @@ $ npm install
 
 ## Prepare the local `nctl` network
 1. Set up [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl)
-2. Update `client/src/keys-manager.js`:
+2. Update `client/src/utils.js`:
     - Set `baseKeyPath` to your nctl faucet key.
 
 ## Run
