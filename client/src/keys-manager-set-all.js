@@ -31,7 +31,7 @@ const utils = require('./utils');
     await utils.printAccount(mainAccount);
 
     console.log("\n[x] Make transfer.");
-    deploy = utils.transferDeploy(mainAccount, secondAccount, 10);
+    deploy = utils.transferDeploy(mainAccount, secondAccount, 2500000000);
     await utils.sendDeploy(deploy, [firstAccount, secondAccount]);
     await utils.printAccount(mainAccount);
 })();

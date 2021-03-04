@@ -19,6 +19,10 @@ let client = new CasperClient(nodeUrl, eventStoreUrl);
 
 // Utils
 
+function getClient() {
+    return client;
+}
+
 function randomSeed() {
     return Array.from({length: 40}, () => Math.floor(Math.random() * 128))
 }
@@ -33,7 +37,7 @@ async function sendDeploy(deploy, signingKeys) {
 }
 
 async function getDeploy(deployHash) {
-    let i = 10;
+    let i = 20;
     while (i != 0) {
         let [deploy, raw] = await client.getDeployByHashFromRPC(deployHash);
         if (raw.execution_results.length !== 0){
@@ -48,7 +52,7 @@ async function getDeploy(deployHash) {
             continue;
         }
     }
-    throw Error('Tried 10 times. Something\'s wrong');
+    throw Error('Timeout after ' + i + 's. Something\'s wrong');
 }
 
 async function printDeploy(deployHash) {
@@ -225,6 +229,7 @@ module.exports = {
     'sendDeploy': sendDeploy,
     'transferDeploy': transferDeploy,
     'callStoredFaucet': callStoredFaucet,
-    'getDeploy': getDeploy
+    'getDeploy': getDeploy,
+    'getClient': getClient
 
 }

@@ -5,7 +5,7 @@ const utils = require('./utils');
     let masterKey = utils.randomMasterKey();
     let mainAccount = masterKey.deriveIndex(1);
     let auctionInfo = await utils.auction.auctionInfo();
-    let validator = PublicKey.fromHex(auctionInfo.bids[0].public_key);
+    let validator = PublicKey.fromHex(auctionInfo.auction_state.bids[0].public_key);
 
     console.log("Main account: " + utils.toAccountHashString(mainAccount.publicKey));
     console.log("Validator: " + validator.toAccountHex());
