@@ -10,9 +10,9 @@ const utils = require('./utils');
     // 1. Set mainAccount's weight to 3.
     // 2. Set Keys Management Threshold to 3.
     // 3. Set Deploy Threshold to 2.
-    // 4. Add first new key with weight 1.
-    // 5. Add second new key with weight 1.
-    // 6. Make a transfer from mainAccount using only both accounts.
+    // 4. Add first new key with weight 1 (first account).
+    // 5. Add second new key with weight 1 (second account).
+    // 6. Make a transfer from mainAccount using the new accounts.
     // 7. Remove first account.
     // 8. Remove second account.
 
@@ -49,21 +49,21 @@ const utils = require('./utils');
     await utils.sendDeploy(deploy, [mainAccount]);
     await utils.printAccount(mainAccount);
     
-    // 4. Add first new key with weight 1.
+    // 4. Add first new key with weight 1 (first account).
     console.log("\n4. Add first new key with weight 1.\n");
     deploy = utils.keys.setKeyWeightDeploy(mainAccount, firstAccount, 1);
     await utils.sendDeploy(deploy, [mainAccount]);
     await utils.printAccount(mainAccount);
     
-    // 5. Add second new key with weight 1.
+    // 5. Add second new key with weight 1 (second account).
     console.log("\n5. Add second new key with weight 1.\n");
     deploy = utils.keys.setKeyWeightDeploy(mainAccount, secondAccount, 1);
     await utils.sendDeploy(deploy, [mainAccount]);
     await utils.printAccount(mainAccount);
     
-    // 6. Make a transfer from faucet using only both accounts.
-    console.log("\n6. Make a transfer from faucet using only both accounts.\n");
-    deploy = utils.transferDeploy(mainAccount, firstAccount, 1);
+    // 6. Make a transfer from faucet using the new accounts.
+    console.log("\n6. Make a transfer from faucet using the new accounts.\n");
+    deploy = utils.transferDeploy(mainAccount, firstAccount, 2500000000);
     await utils.sendDeploy(deploy, [firstAccount, secondAccount]);
     await utils.printAccount(mainAccount);
     
