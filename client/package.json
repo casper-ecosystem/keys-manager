@@ -1,5 +1,5 @@
 {
-  "name": "casper-client-sdk-example",
+  "name": "keys-manager",
   "version": "1.0.0",
   "description": "Examples using casper-client-sdk",
   "main": "./src/index.js",
@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
   "dependencies": {
-    "casper-client-sdk": "1.0.31"
+    "casper-client-sdk": "1.0.32"
   }
 }

@@ -9,7 +9,7 @@ let networkName = 'casper-net-1';
 
 
 // Load the faucet key. Replace <ENTER_YOUR_PATH> with the directory where your casper-node repository resides.
-let baseKeyPath = "<ENTER_YOUR_PATH>/casper-node/utils/nctl/assets/net-1/faucet/";
+let baseKeyPath = "/home/ziel/workspace/casperlabs/casper-node/utils/nctl/assets/net-1/faucet/";
 let privateKeyPath = baseKeyPath + "secret_key.pem";
 let publicKeyPath = baseKeyPath + "public_key.pem";
 let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
@@ -58,7 +58,7 @@ async function getDeploy(deployHash) {
 async function printDeploy(deployHash) {
     console.log("Deploy hash: " + deployHash);
     console.log("Deploy result:");
-    console.log(await getDeploy(deployHash));
+    console.log(DeployUtil.deployToJson(await getDeploy(deployHash)));
 }
 
 async function printAccount(account) {
@@ -231,5 +231,4 @@ module.exports = {
     'callStoredFaucet': callStoredFaucet,
     'getDeploy': getDeploy,
     'getClient': getClient
-
 }
