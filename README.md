@@ -1,8 +1,8 @@
 # Casper Keys Manager
 
-Full instructions for first-time contributors are found in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/multi-sig/index.html).
+Full instructions for first-time contributors are found in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/multi-sig/index.html).
 
-The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool, and the [Casper client SDK](https://github.com/casper-ecosystem/casper-client-sdk-docs). 
+The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool). 
 
 ## Install
 
