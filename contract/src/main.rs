@@ -4,8 +4,6 @@
 )]
 #![no_main]
 
-use keys_manager;
-
 #[no_mangle]
 pub extern "C" fn call() {
     keys_manager::execute();
