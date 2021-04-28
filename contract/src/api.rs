@@ -1,6 +1,7 @@
-use casper_contract::{contract_api::runtime};
+use casper_contract::contract_api::runtime;
 use casper_types::{
-    account::{AccountHash, Weight}, PublicKey, U512
+    account::{AccountHash, Weight},
+    PublicKey, U512,
 };
 
 use crate::errors::Error;
@@ -29,7 +30,7 @@ pub enum Api {
     SetKeyManagementThreshold(Weight),
     SetAll(Weight, Weight, Vec<AccountHash>, Vec<Weight>),
     Delegate(PublicKey, PublicKey, U512),
-    Undelegate(PublicKey, PublicKey, U512)
+    Undelegate(PublicKey, PublicKey, U512),
 }
 
 fn get_action_arg() -> String {
@@ -68,14 +69,12 @@ impl Api {
                 let threshold: u8 = get_weight_arg();
                 Api::SetKeyManagementThreshold(Weight::new(threshold))
             }
-            SET_ALL => {
-                Api::SetAll(
-                    Weight::new(runtime::get_named_arg(ARG_DEPLOYMENT_THRESHOLD)),
-                    Weight::new(runtime::get_named_arg(ARG_KEY_MANAGEMENT_THRESHOLD)),
-                    runtime::get_named_arg(ARG_ACCOUNTS),
-                    runtime::get_named_arg(ARG_WEIGHTS),
-                )
-            }
+            SET_ALL => Api::SetAll(
+                Weight::new(runtime::get_named_arg(ARG_DEPLOYMENT_THRESHOLD)),
+                Weight::new(runtime::get_named_arg(ARG_KEY_MANAGEMENT_THRESHOLD)),
+                runtime::get_named_arg(ARG_ACCOUNTS),
+                runtime::get_named_arg(ARG_WEIGHTS),
+            ),
             DELEGATE => {
                 let (delegator, validator, amount) = get_delegate_args();
                 Api::Delegate(delegator, validator, amount)

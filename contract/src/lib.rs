@@ -1,19 +1,22 @@
 use casper_contract::{
-    contract_api::{account, system, runtime},
-    unwrap_or_revert::UnwrapOrRevert
+    contract_api::{account, runtime, system},
+    unwrap_or_revert::UnwrapOrRevert,
 };
 use casper_types::{
-    auction, PublicKey, U512, RuntimeArgs, runtime_args,
     account::{
-        AccountHash, Weight, ActionType, AddKeyFailure, RemoveKeyFailure, SetThresholdFailure, UpdateKeyFailure,
-    }
+        AccountHash, ActionType, AddKeyFailure, RemoveKeyFailure, SetThresholdFailure,
+        UpdateKeyFailure, Weight,
+    },
+    runtime_args,
+    system::auction,
+    PublicKey, RuntimeArgs, U512,
 };
 
-mod errors;
 mod api;
+mod errors;
 
-use errors::Error;
 use api::Api;
+use errors::Error;
 
 pub fn execute() {
     let result = match Api::from_args() {
@@ -24,7 +27,7 @@ pub fn execute() {
         }
         Api::SetAll(deployment_thereshold, key_management_threshold, accounts, weights) => {
             for (account, weight) in accounts.iter().zip(weights) {
-                set_key_weight(account.clone(), weight).unwrap_or_revert();
+                set_key_weight(*account, weight).unwrap_or_revert();
             }
             set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();
             set_threshold(ActionType::Deployment, deployment_thereshold).unwrap_or_revert();
@@ -48,7 +51,7 @@ fn set_key_weight(key: AccountHash, weight: Weight) -> Result<(), Error> {
     } else {
         add_or_update_key(key, weight)
     }
-} 
+}
 
 fn add_or_update_key(key: AccountHash, weight: Weight) -> Result<(), Error> {
     match account::update_associated_key(key, weight) {
@@ -80,9 +83,7 @@ fn remove_key_if_exists(key: AccountHash) -> Result<(), Error> {
 fn set_threshold(permission_level: ActionType, threshold: Weight) -> Result<(), Error> {
     match account::set_action_threshold(permission_level, threshold) {
         Ok(()) => Ok(()),
-        Err(SetThresholdFailure::KeyManagementThreshold) => {
-            Err(Error::KeyManagementThresholdError)
-        }
+        Err(SetThresholdFailure::KeyManagementThreshold) => Err(Error::KeyManagementThresholdError),
         Err(SetThresholdFailure::DeploymentThreshold) => Err(Error::DeploymentThresholdError),
         Err(SetThresholdFailure::PermissionDeniedError) => Err(Error::PermissionDenied),
         Err(SetThresholdFailure::InsufficientTotalWeight) => Err(Error::InsufficientTotalWeight),
@@ -92,7 +93,6 @@ fn set_threshold(permission_level: ActionType, threshold: Weight) -> Result<(), 
 fn delegate(delegator: PublicKey, validator: PublicKey, amount: U512) {
     call_auction(auction::METHOD_DELEGATE, delegator, validator, amount);
 }
-
 
 fn undelegate(delegator: PublicKey, validator: PublicKey, amount: U512) {
     call_auction(auction::METHOD_UNDELEGATE, delegator, validator, amount);
