@@ -27,7 +27,7 @@ pub fn execute() {
         }
         Api::SetAll(deployment_thereshold, key_management_threshold, accounts, weights) => {
             for (account, weight) in accounts.iter().zip(weights) {
-                set_key_weight(account.clone(), weight).unwrap_or_revert();
+                set_key_weight(*account, weight).unwrap_or_revert();
             }
             set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();
             set_threshold(ActionType::Deployment, deployment_thereshold).unwrap_or_revert();
