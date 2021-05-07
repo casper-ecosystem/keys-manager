@@ -1,5 +1,5 @@
 [package]
-name = "keys-manager"
+name = "contract"
 version = "0.1.0"
 authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
 edition = "2018"
@@ -9,14 +9,11 @@ casper-contract = "1.1.1"
 casper-types = "1.1.1"
 
 [[bin]]
-name = "keys-manager"
+name = "contract"
 path = "src/main.rs"
 bench = false
 doctest = false
 test = false
 
 [features]
-default = ["casper-contract/std", "casper-types/std", "casper-contract/test-support"]
-
-[profile.release]
-lto = true
+default = ["casper-contract/std", "casper-types/std"]
