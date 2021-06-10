@@ -39,7 +39,7 @@ async function sendDeploy(deploy, signingKeys) {
 async function getDeploy(deployHash) {
     let i = 20;
     while (i != 0) {
-        let [deploy, raw] = await client.getDeployByHashFromRPC(deployHash);
+        let [deploy, raw] = await client.getDeploy(deployHash);
         if (raw.execution_results.length !== 0){
             if (raw.execution_results[0].result.Success) {
                 return deploy;
@@ -63,7 +63,9 @@ async function printDeploy(deployHash) {
 
 async function printAccount(account) {
     console.log("\n[x] Current state of the account:");
-    console.log(await getAccount(account.publicKey));
+    // TODO: This is a workaround as the return type of getAccount is class instance.
+    // There might be some code that depends on it so chainging it should be considered as breaking.
+    console.log(JSON.parse(JSON.stringify(await getAccount(account.publicKey))));
 }
 
 async function getAccount(publicKey) {
@@ -177,7 +179,9 @@ function transferDeploy(fromAccount, toAccount, amount) {
     );
     let transferParams = DeployUtil.ExecutableDeployItem.newTransfer(
         amount,
-        toAccount.publicKey
+        toAccount.publicKey,
+        null,
+        1
     );
     let payment = DeployUtil.standardPayment(100000000000);
     return DeployUtil.makeDeploy(deployParams, transferParams, payment);

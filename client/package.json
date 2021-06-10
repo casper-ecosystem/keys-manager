@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
   "dependencies": {
-    "casper-client-sdk": "1.0.32"
+    "casper-client-sdk": "1.4.0"
   }
 }
