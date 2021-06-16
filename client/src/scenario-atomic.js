@@ -1,4 +1,5 @@
 const utils = require('./utils');
+const amount = process.env.AMOUNT;
 
 (async function () {
     
@@ -63,7 +64,7 @@ const utils = require('./utils');
     
     // 6. Make a transfer from faucet using the new accounts.
     console.log("\n6. Make a transfer from faucet using the new accounts.\n");
-    deploy = utils.transferDeploy(mainAccount, firstAccount, 2500000000);
+    deploy = utils.transferDeploy(mainAccount, firstAccount, amount);
     await utils.sendDeploy(deploy, [firstAccount, secondAccount]);
     await utils.printAccount(mainAccount);
     

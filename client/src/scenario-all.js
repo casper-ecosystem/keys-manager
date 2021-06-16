@@ -1,11 +1,12 @@
 const utils = require('./utils');
+const amount = process.env.AMOUNT;
 
 (async function () {
-    let masterKey = utils.randomMasterKey();
-    let mainAccount = masterKey.deriveIndex(1);
-    let firstAccount = masterKey.deriveIndex(2);
-    let secondAccount = masterKey.deriveIndex(3);
-    let thirdAccount = masterKey.deriveIndex(3);
+    const masterKey = utils.randomMasterKey();
+    const mainAccount = masterKey.deriveIndex(1);
+    const firstAccount = masterKey.deriveIndex(2);
+    const secondAccount = masterKey.deriveIndex(3);
+    const thirdAccount = masterKey.deriveIndex(3);
 
     console.log("Main account: " + utils.toAccountHashString(mainAccount.publicKey));
     console.log("First account: " + utils.toAccountHashString(firstAccount.publicKey));
@@ -16,9 +17,9 @@ const utils = require('./utils');
     await utils.fund(mainAccount);
     await utils.printAccount(mainAccount);
 
-    let deployThereshold = 2;
-    let keyManagementThreshold = 3;
-    let accounts = [
+    const deployThereshold = 2;
+    const keyManagementThreshold = 3;
+    const accounts = [
         { publicKey: mainAccount.publicKey, weight: 1 },
         { publicKey: firstAccount.publicKey, weight: 1 }, 
         { publicKey: secondAccount.publicKey, weight: 1 }, 
@@ -31,7 +32,7 @@ const utils = require('./utils');
     await utils.printAccount(mainAccount);
 
     console.log("\n[x] Make transfer.");
-    deploy = utils.transferDeploy(mainAccount, secondAccount, 2500000000);
+    deploy = utils.transferDeploy(mainAccount, secondAccount, amount);
     await utils.sendDeploy(deploy, [firstAccount, secondAccount]);
     await utils.printAccount(mainAccount);
 })();

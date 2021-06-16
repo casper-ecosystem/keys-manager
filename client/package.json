@@ -2,9 +2,9 @@
   "name": "keys-manager",
   "version": "1.0.0",
   "description": "Examples using casper-client-sdk",
-  "main": "./src/index.js",
   "scripts": {
-    "start:atomic": "node -r dotenv/config ./src/keys-manager-atomic.js",
+    "start:atomic": "node -r dotenv/config ./src/scenario-atomic.js",
+    "start:all": "node -r dotenv/config ./src/scenario-all.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

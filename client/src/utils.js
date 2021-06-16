@@ -19,10 +19,6 @@ let client = new CasperClient(nodeUrl, eventStoreUrl);
 
 // Utils
 
-function getClient() {
-    return client;
-}
-
 function randomSeed() {
     return Array.from({length: 40}, () => Math.floor(Math.random() * 128))
 }
@@ -203,5 +199,4 @@ module.exports = {
     'transferDeploy': transferDeploy,
     'callStoredFaucet': callStoredFaucet,
     'getDeploy': getDeploy,
-    'getClient': getClient
 }
