@@ -17,6 +17,9 @@ Environment variables needs to be set in `.env` file.
 ```
 BASE_KEY_PATH=... # absolute path to keys directory
 AMOUNT=2500000000 # amount used in the examples
+NODE_URL=... # optional
+WASM_PATH=... # optional
+NETWORK_NAME=... # optional
 ```
 
 You can also run run both scripts providing custom `.env` path by running 

@@ -2,10 +2,9 @@ const fs = require('fs');
 
 let {CasperClient, CasperServiceByJsonRPC, PublicKey, Keys, RuntimeArgs, CLValue, DeployUtil, AccountHash, KeyValue, CLTypedAndToBytesHelper} = require('casper-client-sdk');
 
-let nodeUrl = 'http://localhost:40101/rpc';
-let eventStoreUrl = 'http://localhost:3000';
-let wasmPath = '../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm';
-let networkName = 'casper-net-1';
+let nodeUrl = process.env.NODE_URL || 'http://localhost:40101/rpc';
+let wasmPath = process.env.WASM_PATH || '../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm';
+let networkName = process.env.NETWORK_NAME || 'casper-net-1';
 
 
 // Load the faucet key. Replace <ENTER_YOUR_PATH> with the directory where your casper-node repository resides.
@@ -15,7 +14,7 @@ let publicKeyPath = baseKeyPath + "public_key.pem";
 let faucetAccount = Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 
 // Create a client connect to Casper Node
-let client = new CasperClient(nodeUrl, eventStoreUrl);
+let client = new CasperClient(nodeUrl);
 
 // Utils
 
