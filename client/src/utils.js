@@ -37,9 +37,10 @@ async function sendDeploy(deploy, signingKeys) {
 }
 
 async function getDeploy(deployHash) {
-    let i = 20;
+    let i = 300;
     while (i != 0) {
-        let [deploy, raw] = await client.getDeployByHashFromRPC(deployHash);
+        let [deploy, raw] = await client.getDeploy(deployHash);
+        // console.log(raw);
         if (raw.execution_results.length !== 0){
             if (raw.execution_results[0].result.Success) {
                 return deploy;
@@ -143,31 +144,6 @@ function buildKeyManagerDeploy(baseAccount, args) {
     return DeployUtil.makeDeploy(deployParams, sessionModule, payment);
 }
 
-// Auction
-
-function delegateDeploy(fromAccount, validator, amount) {
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValue.string("delegate"),
-        delegator: CLValue.publicKey(fromAccount.publicKey),
-        validator: CLValue.publicKey(validator),
-        amount: CLValue.u512(amount)
-    });
-}
-
-function undelegateDeploy(fromAccount, validator, amount) {
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValue.string("undelegate"),
-        delegator: CLValue.publicKey(fromAccount.publicKey),
-        validator: CLValue.publicKey(validator),
-        amount: CLValue.u512(amount)
-    });
-}
-
-async function auctionInfo() {
-    let client = new CasperServiceByJsonRPC(nodeUrl);
-    return await client.getValidatorsInfo();
-}
-
 // Funding
 
 function transferDeploy(fromAccount, toAccount, amount) {
@@ -177,7 +153,9 @@ function transferDeploy(fromAccount, toAccount, amount) {
     );
     let transferParams = DeployUtil.ExecutableDeployItem.newTransfer(
         amount,
-        toAccount.publicKey
+        toAccount.publicKey,
+        null,
+        1
     );
     let payment = DeployUtil.standardPayment(100000000000);
     return DeployUtil.makeDeploy(deployParams, transferParams, payment);
@@ -220,11 +198,6 @@ module.exports = {
         'setKeyWeightDeploy': setKeyWeightDeploy,
         'setDeploymentThresholdDeploy': setDeploymentThresholdDeploy,
         'setKeyManagementThresholdDeploy': setKeyManagementThresholdDeploy
-    },
-    'auction': {
-        'delegateDeploy': delegateDeploy,
-        'undelegateDeploy': undelegateDeploy,
-        'auctionInfo': auctionInfo
     },
     'sendDeploy': sendDeploy,
     'transferDeploy': transferDeploy,
