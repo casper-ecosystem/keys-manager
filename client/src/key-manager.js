@@ -17,6 +17,7 @@ const {
 const { getAccountFromKeyPair, randomSeed, toAccountHashString, sleep } = require('./utils');
 
 const FUND_AMOUNT = 10000000000000;
+const PAYMENT_AMOUNT = 100000000000;
 
 const NODE_URL = process.env.NODE_URL || 'http://localhost:40101/rpc';
 const WASM_PATH = process.env.WASM_PATH || '../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm';
@@ -75,7 +76,7 @@ async function printDeploy(deployHash) {
 
 async function printAccount(account) {
     console.log("\n[x] Current state of the account:");
-    console.log(await getAccount(account.publicKey));
+    console.log(JSON.stringify(await getAccount(account.publicKey), null, 2));
 }
 
 function randomMasterKey() {
@@ -86,11 +87,10 @@ function randomMasterKey() {
 // Key manager
 
 function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWeights) {
-    let accounts = accountWeights.map(x => CLValueBuilder.byteArray(x.publicKey.toAccountHash()));
+    let accounts = accountWeights.map(x => x.publicKey);
     let weights = accountWeights.map(x => CLValueBuilder.u8(x.weight));
 
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValueBuilder.string("set_all"),
+    return buildKeyManagerDeploy(fromAccount, "set_all", {
         deployment_thereshold: CLValueBuilder.u8(deployThereshold),
         key_management_threshold: CLValueBuilder.u8(keyManagementThreshold),
         accounts: CLValueBuilder.list(accounts),
@@ -99,40 +99,52 @@ function setAll(fromAccount, deployThereshold, keyManagementThreshold, accountWe
 }
 
 function setKeyWeightDeploy(fromAccount, account, weight) {
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValueBuilder.string("set_key_weight"),
-        account: CLValueBuilder.byteArray(account.accountHash()),
+    return buildKeyManagerDeploy(fromAccount, "set_key_weight", {
+        account: account.publicKey,
         weight: CLValueBuilder.u8(weight)
     });
 }
 
 function setDeploymentThresholdDeploy(fromAccount, weight) {
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValueBuilder.string("set_deployment_threshold"),
+    return buildKeyManagerDeploy(fromAccount, "set_deployment_threshold", {
         weight: CLValueBuilder.u8(weight)
     });
 }
 
 function setKeyManagementThresholdDeploy(fromAccount, weight) {
-    return buildKeyManagerDeploy(fromAccount, {
-        action: CLValueBuilder.string("set_key_management_threshold"),
+    return buildKeyManagerDeploy(fromAccount, "set_key_management_threshold", {
         weight: CLValueBuilder.u8(weight)
     });
 }
 
-function buildKeyManagerDeploy(baseAccount, args) {
+function buildKeyManagerDeploy(baseAccount, entrypoint, args) {
+    let deployParams = new DeployUtil.DeployParams(
+        baseAccount.publicKey,
+        NETWORK_NAME
+    );
+    let runtimeArgs = RuntimeArgs.fromMap(args);
+    let sessionModule = DeployUtil.ExecutableDeployItem.newStoredContractByName(
+        "keys_manager",
+        entrypoint,
+        runtimeArgs
+    );
+    let payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
+    return DeployUtil.makeDeploy(deployParams, sessionModule, payment);
+}
+
+function buildContractInstallDeploy(baseAccount) {
     let deployParams = new DeployUtil.DeployParams(
         baseAccount.publicKey,
         NETWORK_NAME
     );
     const session = new Uint8Array(fs.readFileSync(WASM_PATH, null).buffer);
-    let runtimeArgs = RuntimeArgs.fromMap(args);
+    let runtimeArgs = RuntimeArgs.fromMap({});
 
     let sessionModule = DeployUtil.ExecutableDeployItem.newModuleBytes(
         session,
         runtimeArgs
     );
-    let payment = DeployUtil.standardPayment(100000000000);
+    let payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
     return DeployUtil.makeDeploy(deployParams, sessionModule, payment);
 }
 
@@ -148,33 +160,12 @@ function transferDeploy(fromAccount, toAccount, amount) {
         null,
         1
     );
-    let payment = DeployUtil.standardPayment(100000000000);
+    let payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
     return DeployUtil.makeDeploy(deployParams, transferParams, payment);
 }
 
 async function fund(account) {
-    let deploy = transferDeploy(faucetAccount, account, 10000000000000);
-    await sendDeploy(deploy, [faucetAccount]);
-}
-
-// Faucet
-async function callStoredFaucet(account) {
-    let deployParams = new DeployUtil.DeployParams(
-        faucetAccount.publicKey,
-        NETWORK_NAME
-    );
-    let args = RuntimeArgs.fromMap({
-        target: CLValue.byteArray(account.accountHash()),
-        amount: CLValue.u512(1000000000000)
-    });
-    let transferParams = DeployUtil.ExecutableDeployItem.newStoredContractByName(
-        "faucet",
-        "call_faucet",
-        args
-    );
-    let payment = DeployUtil.standardPayment(100000000000);
-    let deploy = DeployUtil.makeDeploy(deployParams, transferParams, payment);
-    console.log(DeployUtil.deployToJson(deploy));
+    let deploy = transferDeploy(faucetAccount, account, FUND_AMOUNT);
     await sendDeploy(deploy, [faucetAccount]);
 }
 
@@ -187,10 +178,10 @@ module.exports = {
         'setAll': setAll,
         'setKeyWeightDeploy': setKeyWeightDeploy,
         'setDeploymentThresholdDeploy': setDeploymentThresholdDeploy,
-        'setKeyManagementThresholdDeploy': setKeyManagementThresholdDeploy
+        'setKeyManagementThresholdDeploy': setKeyManagementThresholdDeploy,
+        'buildContractInstallDeploy': buildContractInstallDeploy
     },
     'sendDeploy': sendDeploy,
     'transferDeploy': transferDeploy,
-    'callStoredFaucet': callStoredFaucet,
     'getDeploy': getDeploy,
 }

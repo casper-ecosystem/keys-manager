@@ -7,16 +7,7 @@
     "start:all": "node -r dotenv/config ./src/scenario-all.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/casper-ecosystem/casper-client-sdk-example.git"
-  },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/casper-ecosystem/casper-client-sdk-example/issues"
-  },
-  "homepage": "https://github.com/casper-ecosystem/casper-client-sdk-example#readme",
   "dependencies": {
     "casper-client-sdk": "../../casper-js-sdk",
     "dotenv": "^10.0.0"

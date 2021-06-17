@@ -1,0 +1,2 @@
+BASE_KEY_PATH=../../casper-node/utils/nctl/assets/net-1/faucet/
+AMOUNT=2500000000

@@ -28,10 +28,15 @@ const amount = process.env.AMOUNT;
     let firstAccount = masterKey.deriveIndex(2);
     let secondAccount = masterKey.deriveIndex(3);
 
-    console.log("\n0. Fund main account.\n");
+    console.log("\n0.1 Fund main account.\n");
     await keyManager.fund(mainAccount);
     await keyManager.printAccount(mainAccount);
     
+    console.log("\n[x]0.2 Install Keys Manager contract");
+    deploy = keyManager.keys.buildContractInstallDeploy(mainAccount);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+
     // 1. Set mainAccount's weight to 3
     console.log("\n1. Set faucet's weight to 3\n");
     deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, mainAccount, 3);

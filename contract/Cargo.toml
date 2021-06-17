@@ -1,12 +1,12 @@
 [package]
 name = "keys-manager"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-casper-contract = "1.1.1"
-casper-types = "1.1.1"
+casper-contract = "1.2.0"
+casper-types = "1.2.0"
 
 [[bin]]
 name = "keys-manager"

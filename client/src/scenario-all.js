@@ -17,6 +17,11 @@ const amount = process.env.AMOUNT;
     await keyManager.fund(mainAccount);
     await keyManager.printAccount(mainAccount);
 
+    console.log("\n[x] Install Keys Manager contract");
+    let deploy = keyManager.keys.buildContractInstallDeploy(mainAccount);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+
     const deployThereshold = 2;
     const keyManagementThreshold = 3;
     const accounts = [
@@ -24,15 +29,15 @@ const amount = process.env.AMOUNT;
         { publicKey: firstAccount.publicKey, weight: 1 }, 
         { publicKey: secondAccount.publicKey, weight: 1 }, 
         { publicKey: thirdAccount.publicKey, weight: 1 }, 
-    ]
+    ];
 
     console.log("\n[x] Update keys deploy.");
-    let deploy = keyManager.keys.setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
+    deploy = keyManager.keys.setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
     await keyManager.sendDeploy(deploy, [mainAccount]);
     await keyManager.printAccount(mainAccount);
 
-    // console.log("\n[x] Make transfer.");
-    // deploy = keyManager.transferDeploy(mainAccount, secondAccount, amount);
-    // await keyManager.sendDeploy(deploy, [firstAccount, secondAccount]);
-    // await keyManager.printAccount(mainAccount);
+    console.log("\n[x] Make transfer.");
+    deploy = keyManager.transferDeploy(mainAccount, secondAccount, amount);
+    await keyManager.sendDeploy(deploy, [firstAccount, secondAccount]);
+    await keyManager.printAccount(mainAccount);
 })();
