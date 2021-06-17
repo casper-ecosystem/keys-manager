@@ -1,4 +1,4 @@
-const utils = require('./utils');
+const keyManager = require('./key-manager');
 const amount = process.env.AMOUNT;
 
 (async function () {
@@ -23,61 +23,61 @@ const amount = process.env.AMOUNT;
     // There should be only one associated key (facuet) with weight 1.
     // Deployment Threshold should be set to 1.
     // Key Management Threshold should be set to 1.
-    let masterKey = utils.randomMasterKey();
+    let masterKey = keyManager.randomMasterKey();
     let mainAccount = masterKey.deriveIndex(1);
     let firstAccount = masterKey.deriveIndex(2);
     let secondAccount = masterKey.deriveIndex(3);
 
     console.log("\n0. Fund main account.\n");
-    await utils.fund(mainAccount);
-    await utils.printAccount(mainAccount);
+    await keyManager.fund(mainAccount);
+    await keyManager.printAccount(mainAccount);
     
     // 1. Set mainAccount's weight to 3
     console.log("\n1. Set faucet's weight to 3\n");
-    deploy = utils.keys.setKeyWeightDeploy(mainAccount, mainAccount, 3);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, mainAccount, 3);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 2. Set Keys Management Threshold to 3.
     console.log("\n2. Set Keys Management Threshold to 3\n");
-    deploy = utils.keys.setKeyManagementThresholdDeploy(mainAccount, 3);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyManagementThresholdDeploy(mainAccount, 3);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 3. Set Deploy Threshold to 2.
     console.log("\n3. Set Deploy Threshold to 2.\n");
-    deploy = utils.keys.setDeploymentThresholdDeploy(mainAccount, 2);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setDeploymentThresholdDeploy(mainAccount, 2);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 4. Add first new key with weight 1 (first account).
     console.log("\n4. Add first new key with weight 1.\n");
-    deploy = utils.keys.setKeyWeightDeploy(mainAccount, firstAccount, 1);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, firstAccount, 1);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 5. Add second new key with weight 1 (second account).
     console.log("\n5. Add second new key with weight 1.\n");
-    deploy = utils.keys.setKeyWeightDeploy(mainAccount, secondAccount, 1);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, secondAccount, 1);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 6. Make a transfer from faucet using the new accounts.
     console.log("\n6. Make a transfer from faucet using the new accounts.\n");
-    deploy = utils.transferDeploy(mainAccount, firstAccount, amount);
-    await utils.sendDeploy(deploy, [firstAccount, secondAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.transferDeploy(mainAccount, firstAccount, amount);
+    await keyManager.sendDeploy(deploy, [firstAccount, secondAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 7. Remove first account.
     console.log("\n7. Remove the first account\n");
-    deploy = utils.keys.setKeyWeightDeploy(mainAccount, firstAccount, 0);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, firstAccount, 0);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
     // 8. Remove second account.
     console.log("\n8. Remove the second account\n");
-    deploy = utils.keys.setKeyWeightDeploy(mainAccount, secondAccount, 0);
-    await utils.sendDeploy(deploy, [mainAccount]);
-    await utils.printAccount(mainAccount);
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, secondAccount, 0);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
     
 })();
