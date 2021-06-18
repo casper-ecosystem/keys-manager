@@ -2,21 +2,21 @@ use casper_types::ApiError;
 
 #[repr(u16)]
 pub enum Error {
-    UnknownApiCommand = 1,             // 65537
-    PermissionDenied = 2,              // 65538
-    ThresholdViolation = 3,            // 65539
-    MaxKeysLimit = 4,                  // 65540
-    DuplicateKey = 5,                  // 65541
-    KeyManagementThresholdError = 6,   // 65542
-    DeploymentThresholdError = 7,      // 65543
-    InsufficientTotalWeight = 8,       // 65544
-    MissingArgument0 = 20,             // 65556
-    MissingArgument1 = 21,             // 65557
-    MissingArgument2 = 22,             // 65558
-    InvalidArgument0 = 23,             // 65559
-    InvalidArgument1 = 24,             // 65560
-    InvalidArgument2 = 25,             // 65561
-    UnsupportedNumberOfArguments = 30, // 65566
+    UnknownApiCommand = 1,
+    PermissionDenied = 2,
+    ThresholdViolation = 3,
+    MaxKeysLimit = 4,
+    DuplicateKey = 5,
+    KeyManagementThresholdError = 6,
+    DeploymentThresholdError = 7,
+    InsufficientTotalWeight = 8,
+    MissingArgument0 = 20,
+    MissingArgument1 = 21,
+    MissingArgument2 = 22,
+    InvalidArgument0 = 23,
+    InvalidArgument1 = 24,
+    InvalidArgument2 = 25,
+    UnsupportedNumberOfArguments = 30,
 }
 
 impl Error {
