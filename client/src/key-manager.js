@@ -6,13 +6,12 @@ const {
   PublicKey, 
   Keys, 
   RuntimeArgs, 
-  CLValue, 
   DeployUtil, 
   AccountHash, 
   KeyValue, 
   CLTypedAndToBytesHelper,
   CLValueBuilder,
-} = require('casper-client-sdk');
+} = require('casper-js-sdk');
 
 const { getAccountFromKeyPair, randomSeed, toAccountHashString, sleep } = require('./utils');
 

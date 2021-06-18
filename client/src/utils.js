@@ -1,4 +1,4 @@
-const { Keys } = require("casper-client-sdk");
+const { Keys } = require("casper-js-sdk");
 
 function randomSeed() {
     return Array.from({length: 40}, () => Math.floor(Math.random() * 128))
