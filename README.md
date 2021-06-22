@@ -20,12 +20,6 @@ Create a WASM file that will be used by the JS client.
 $ cargo build --release
 ```
 
-### Install the JS packages
-```bash
-$ cd client
-$ npm install
-```
-
 ## Prepare the local `nctl` network
 1. Set up [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl)
 2. Update `client/src/utils.js`:
@@ -37,14 +31,6 @@ $ npm install
 ### Installation
 
 Just run `npm i` in `./client`.
-
-### Set-all 
-
-`npm run start:all`
-
-### Step-by-step
-
-`npm run start:atomic`
 
 ### Env configuration
 
@@ -63,3 +49,15 @@ TRANSFER_AMOUNT=2500000000 # defaults to 2500000000 = 2.5CSPR
 You can also run run both scripts providing custom `.env` path by running 
 
 `npm run start:atomic dotenv_config_path=./example-env-file`
+
+### Set-all 
+
+`npm run start:all`
+
+### Step-by-step
+
+`npm run start:atomic`
+
+### Interactive mode
+
+To run a script in interactive mode just add `interactive` to the above command.

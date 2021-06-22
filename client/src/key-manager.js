@@ -13,7 +13,7 @@ const {
   CLValueBuilder,
 } = require('casper-js-sdk');
 
-const { getAccountFromKeyPair, randomSeed, toAccountHashString, sleep } = require('./utils');
+const { getAccountFromKeyPair, randomSeed, toAccountHashString, sleep, pauseAndWaitForKeyPress } = require('./utils');
 
 const FUND_AMOUNT = process.env.FUND_AMOUNT || 10000000000000;
 const PAYMENT_AMOUNT = process.env.PAYMENT_AMOUNT || 100000000000;
@@ -91,7 +91,8 @@ async function printDeploy(deployHash) {
 // Helper method for printing account info 
 async function printAccount(account) {
     console.log("\n[x] Current state of the account:");
-    console.log(JSON.stringify(await getAccount(account.publicKey), null, 2));
+    console.log(JSON.parse(JSON.stringify(await getAccount(account.publicKey), null, 2)));
+    await pauseAndWaitForKeyPress();
 }
 
 //

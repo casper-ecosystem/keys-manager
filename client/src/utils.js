@@ -15,8 +15,25 @@ const getAccountFromKeyPair = (baseKeyPath) => {
   return Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 }
 
+console.log();
+
+const pauseAndWaitForKeyPress = async () => {
+  if (process.argv[2] === "interactive") {
+    process.stdin.setRawMode(true)
+    console.log("\n============================================\n");
+    console.log("press any key to continue script execution");
+    return new Promise(resolve => process.stdin.once('data', () => {
+      process.stdin.setRawMode(false)
+      resolve()
+      console.log("\n============================================\n");
+    }))
+  }
+  return;
+}
+
 module.exports = {
   randomSeed: randomSeed,
   sleep: sleep,
-  getAccountFromKeyPair: getAccountFromKeyPair
+  getAccountFromKeyPair: getAccountFromKeyPair,
+  pauseAndWaitForKeyPress
 }
