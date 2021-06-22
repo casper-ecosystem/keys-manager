@@ -37,7 +37,7 @@ const client = new CasperClient(NODE_URL);
 async function getDeploy(deployHash) {
     let i = 300;
     while (i != 0) {
-        let [deploy, raw] = await client.getDeploy(deployHash);
+        const [deploy, raw] = await client.getDeploy(deployHash);
         if (raw.execution_results.length !== 0){
             if (raw.execution_results[0].result.Success) {
                 return deploy;
@@ -55,9 +55,9 @@ async function getDeploy(deployHash) {
 
 // Helper method for getting the current state of the account
 async function getAccount(publicKey) {
-    let c = new CasperServiceByJsonRPC(NODE_URL);
-    let stateRootHash = (await c.getLatestBlockInfo()).block.header.state_root_hash;
-    let account = await c.getBlockState(
+    const c = new CasperServiceByJsonRPC(NODE_URL);
+    const stateRootHash = (await c.getLatestBlockInfo()).block.header.state_root_hash;
+    const account = await c.getBlockState(
         stateRootHash,
         publicKey.toAccountHashStr(),
         []
@@ -71,7 +71,7 @@ async function sendDeploy(deploy, signingKeys) {
         console.log(`Signed by: ${key.publicKey.toAccountHashStr()}`);
         deploy = client.signDeploy(deploy, key);
     }
-    let deployHash = await client.putDeploy(deploy);
+    const deployHash = await client.putDeploy(deploy);
     await printDeploy(deployHash);
 }
 
@@ -100,17 +100,17 @@ async function printAccount(account) {
 
 // Builds native transfer deploy
 function transferDeploy(fromAccount, toAccount, amount) {
-    let deployParams = new DeployUtil.DeployParams(
+    const deployParams = new DeployUtil.DeployParams(
         fromAccount.publicKey,
         NETWORK_NAME
     );
-    let transferParams = DeployUtil.ExecutableDeployItem.newTransfer(
+    const transferParams = DeployUtil.ExecutableDeployItem.newTransfer(
         amount,
         toAccount.publicKey,
         null,
         1
     );
-    let payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
+    const payment = DeployUtil.standardPayment(PAYMENT_AMOUNT);
     return DeployUtil.makeDeploy(deployParams, transferParams, payment);
 }
 
