@@ -22,8 +22,11 @@ const amount = process.env.AMOUNT;
     await keyManager.sendDeploy(deploy, [mainAccount]);
     await keyManager.printAccount(mainAccount);
 
+    // Deploy threshold is 2 out of 3
     const deployThereshold = 2;
+    // Key Managment threshold is 3 out of 3
     const keyManagementThreshold = 3;
+    // Every account weight is set to 1
     const accounts = [
         { publicKey: mainAccount.publicKey, weight: 1 },
         { publicKey: firstAccount.publicKey, weight: 1 }, 
@@ -31,6 +34,7 @@ const amount = process.env.AMOUNT;
         { publicKey: thirdAccount.publicKey, weight: 1 }, 
     ];
 
+    // 
     console.log("\n[x] Update keys deploy.");
     deploy = keyManager.keys.setAll(mainAccount, deployThereshold, keyManagementThreshold, accounts);
     await keyManager.sendDeploy(deploy, [mainAccount]);
