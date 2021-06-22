@@ -1,5 +1,5 @@
 const keyManager = require('./key-manager');
-const amount = process.env.AMOUNT;
+const TRANSFER_AMOUNT = process.env.TRANSFER_AMOUNT;
 
 (async function () {
     
@@ -29,7 +29,7 @@ const amount = process.env.AMOUNT;
     let secondAccount = masterKey.deriveIndex(3);
 
     console.log("\n0.1 Fund main account.\n");
-    await keyManager.fund(mainAccount);
+    await keyManager.fundAccount(mainAccount);
     await keyManager.printAccount(mainAccount);
     
     console.log("\n[x]0.2 Install Keys Manager contract");
@@ -69,7 +69,7 @@ const amount = process.env.AMOUNT;
     
     // 6. Make a transfer from faucet using the new accounts.
     console.log("\n6. Make a transfer from faucet using the new accounts.\n");
-    deploy = keyManager.transferDeploy(mainAccount, firstAccount, amount);
+    deploy = keyManager.transferDeploy(mainAccount, firstAccount, TRANSFER_AMOUNT);
     await keyManager.sendDeploy(deploy, [firstAccount, secondAccount]);
     await keyManager.printAccount(mainAccount);
     

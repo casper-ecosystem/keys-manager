@@ -31,10 +31,34 @@ $ npm install
 2. Update `client/src/utils.js`:
     - Set `baseKeyPath` to your nctl faucet key.
 
-## Run
-Run the client code.
-```bash
-$ cd client
-$ node src/keys-manager.js
-$ node src/keys-manager-set-all.js
+
+## Running prepared client-scenarios
+
+### Installation
+
+Just run `npm i` in `./client`.
+
+### Set-all 
+
+`npm run start:all`
+
+### Step-by-step
+
+`npm run start:atomic`
+
+### Env configuration
+
+Environment variables needs to be set in `.env` file in `./client`.
+
 ```
+BASE_KEY_PATH=... # absolute path to keys directory
+FUND_AMOUNT=10000000000000 # defaults to 10000000000000 = 10000CSPR
+PAYMENT_AMOUNT=100000000000 # defaults to 100000000000 = 100CSPR
+NODE_URL=... # optional, defaults to standard NCTL address http://localhost:40101/rpc
+WASM_PATH=... # optional, defaults to ../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm
+NETWORK_NAME=... # optional, defaults to casper-net-1
+```
+
+You can also run run both scripts providing custom `.env` path by running 
+
+`npm run start:atomic dotenv_config_path=./example-env-file`
