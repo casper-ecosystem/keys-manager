@@ -52,11 +52,12 @@ Environment variables needs to be set in `.env` file in `./client`.
 
 ```
 BASE_KEY_PATH=... # absolute path to keys directory
-FUND_AMOUNT=10000000000000 # defaults to 10000000000000 = 10000CSPR
-PAYMENT_AMOUNT=100000000000 # defaults to 100000000000 = 100CSPR
 NODE_URL=... # optional, defaults to standard NCTL address http://localhost:40101/rpc
 WASM_PATH=... # optional, defaults to ../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm
 NETWORK_NAME=... # optional, defaults to casper-net-1
+FUND_AMOUNT=10000000000000 # defaults to 10000000000000 = 10000CSPR
+PAYMENT_AMOUNT=100000000000 # defaults to 100000000000 = 100CSPR
+TRANSFER_AMOUNT=2500000000 # defaults to 2500000000 = 2.5CSPR
 ```
 
 You can also run run both scripts providing custom `.env` path by running 

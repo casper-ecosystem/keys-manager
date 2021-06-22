@@ -1,5 +1,5 @@
 const keyManager = require('./key-manager');
-const TRANSFER_AMOUNT = process.env.TRANSFER_AMOUNT;
+const TRANSFER_AMOUNT = process.env.TRANSFER_AMOUNT || 2500000000;
 
 (async function () {
 
