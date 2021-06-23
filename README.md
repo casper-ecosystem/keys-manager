@@ -9,7 +9,6 @@ The steps below are a quick start if you have already set up your [develoment en
 ### Set up the Rust toolchain
 You need the Rust toolchain to develop smart contracts.
 ```bash
-$ cd contract
 $ rustup install $(cat rust-toolchain)
 $ rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
 ```
@@ -17,14 +16,12 @@ $ rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
 ### Compile Account Code (Smart Contracts)
 Create a WASM file that will be used by the JS client.
 ```bash
+$ cd contract
 $ cargo build --release
 ```
 
 ## Prepare the local `nctl` network
 1. Set up [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl)
-2. Update `client/src/utils.js`:
-    - Set `baseKeyPath` to your nctl faucet key.
-
 
 ## Running prepared client-scenarios
 
@@ -60,4 +57,4 @@ You can also run run both scripts providing custom `.env` path by running
 
 ### Interactive mode
 
-To run a script in interactive mode just add `interactive` to the above command.
+To run a script in interactive mode just add `interactive` to the above commands.
