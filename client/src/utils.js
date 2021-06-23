@@ -4,10 +4,6 @@ function randomSeed() {
     return Array.from({length: 40}, () => Math.floor(Math.random() * 128))
 }
 
-function toAccountHashString(publicKey) {
-    return Buffer.from(publicKey.toAccountHash()).toString('hex');
-}
-
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -19,9 +15,23 @@ const getAccountFromKeyPair = (baseKeyPath) => {
   return Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 }
 
+const pauseAndWaitForKeyPress = async () => {
+  if (process.argv[2] === "interactive") {
+    process.stdin.setRawMode(true)
+    console.log("\n============================================\n");
+    console.log("press any key to continue script execution");
+    return new Promise(resolve => process.stdin.once('data', () => {
+      process.stdin.setRawMode(false)
+      resolve()
+      console.log("\n============================================\n");
+    }))
+  }
+  return;
+}
+
 module.exports = {
   randomSeed: randomSeed,
-  toAccountHashString: toAccountHashString,
   sleep: sleep,
-  getAccountFromKeyPair: getAccountFromKeyPair
+  getAccountFromKeyPair: getAccountFromKeyPair,
+  pauseAndWaitForKeyPress
 }
