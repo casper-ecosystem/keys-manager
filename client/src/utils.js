@@ -15,8 +15,6 @@ const getAccountFromKeyPair = (baseKeyPath) => {
   return Keys.Ed25519.parseKeyFiles(publicKeyPath, privateKeyPath);
 }
 
-console.log();
-
 const pauseAndWaitForKeyPress = async () => {
   if (process.argv[2] === "interactive") {
     process.stdin.setRawMode(true)
