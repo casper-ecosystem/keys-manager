@@ -112,8 +112,8 @@ fn update_key_weight(account: AccountHash, weight: Weight) {
     }
 }
 
-fn set_threshold(permission_level: ActionType, threshold: Weight) -> Result<(), Error> {
-    match account::set_action_threshold(permission_level, threshold) {
+fn set_threshold(action_type: ActionType, threshold: Weight) -> Result<(), Error> {
+    match account::set_action_threshold(action_type, threshold) {
         Ok(()) => Ok(()),
         Err(SetThresholdFailure::KeyManagementThreshold) => Err(Error::KeyManagementThresholdError),
         Err(SetThresholdFailure::DeploymentThreshold) => Err(Error::DeploymentThresholdError),
@@ -135,7 +135,7 @@ fn add_key(key: AccountHash, weight: Weight) -> Result<(), Error> {
     match account::add_associated_key(key, weight) {
         Ok(()) => Ok(()),
         Err(AddKeyFailure::MaxKeysLimit) => Err(Error::MaxKeysLimit),
-        Err(AddKeyFailure::DuplicateKey) => Err(Error::DuplicateKey), // Should never happen.
+        Err(AddKeyFailure::DuplicateKey) => Err(Error::DuplicateKey),
         Err(AddKeyFailure::PermissionDenied) => Err(Error::PermissionDenied),
     }
 }

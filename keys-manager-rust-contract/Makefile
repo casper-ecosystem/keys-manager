@@ -2,7 +2,7 @@ prepare:
 	rustup target add wasm32-unknown-unknown
 
 build-contract:
-	cd contract && cargo build --release -p keys-manager --target wasm32-unknown-unknown
+	cargo build --release -p contract --target wasm32-unknown-unknown
 
 clippy:
 	cd contract && cargo clippy --all-targets --all -- -D warnings -A renamed_and_removed_lints
@@ -15,3 +15,13 @@ lint: clippy
 	
 clean:
 	cd contract && cargo clean
+
+test-only:
+	cargo test -p tests
+
+copy-wasm-file-to-test:
+	mkdir -p tests/wasm
+	cp target/wasm32-unknown-unknown/release/*.wasm tests/wasm
+
+test: build-contract copy-wasm-file-to-test test-only
+

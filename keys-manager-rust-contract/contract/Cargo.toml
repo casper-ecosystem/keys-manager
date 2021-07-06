@@ -1,5 +1,5 @@
 [package]
-name = "keys-manager"
+name = "contract"
 version = "0.2.0"
 authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
 edition = "2018"
@@ -11,6 +11,13 @@ casper-types = "1.2.0"
 [[bin]]
 name = "keys-manager"
 path = "src/main.rs"
+bench = false
+doctest = false
+test = false
+
+[[bin]]
+name = "test-contract"
+path = "src/test_contract.rs"
 bench = false
 doctest = false
 test = false
