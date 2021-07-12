@@ -45,17 +45,17 @@ pub extern "C" fn set_key_management_threshold() {
 
 #[no_mangle]
 pub extern "C" fn set_all() {
-
-    println!("------------------------bere-------------------------");
     let deployment_threshold: Weight =
         Weight::new(runtime::get_named_arg(ARG_DEPLOYMENT_THRESHOLD));
     let key_management_threshold: Weight =
         Weight::new(runtime::get_named_arg(ARG_KEY_MANAGEMENT_THRESHOLD));
     let accounts: Vec<PublicKey> = runtime::get_named_arg(ARG_ACCOUNTS);
-    let weights: Vec<Weight> = runtime::get_named_arg(ARG_WEIGHTS);
+    let weights: Vec<u8> = runtime::get_named_arg(ARG_WEIGHTS);
 
     for (account, weight) in accounts.into_iter().zip(weights) {
-        update_key_weight(account.to_account_hash(), weight);
+        update_key_weight(
+            account.to_account_hash(), 
+            Weight::new(weight));
     }
 
     set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();

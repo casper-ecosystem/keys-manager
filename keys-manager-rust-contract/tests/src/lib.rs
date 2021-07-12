@@ -1,5 +1,5 @@
 use casper_engine_test_support::{Code, Session, SessionBuilder, TestContext, TestContextBuilder};
-use casper_types::{PublicKey, RuntimeArgs, SecretKey, U512, account::AccountHash, runtime_args};
+use casper_types::{PublicKey, RuntimeArgs, SecretKey, U512, account::AccountHash, bytesrepr::Bytes, runtime_args};
 
 pub const ARG_ACCOUNT: &str = "account";
 pub const ARG_WEIGHT: &str = "weight";
@@ -82,6 +82,7 @@ impl Context {
     }
 
     pub fn set_all(&mut self,signers: Vec<PublicKey>, deployment_threshold:u8, key_management_threshold:u8, accounts: Vec<PublicKey>, weights: Vec<u8>) {
+        let bytes: Bytes = weights.into();
         self.call_keys_manager(
             signers,
             "set_all",
@@ -89,7 +90,7 @@ impl Context {
                 ARG_DEPLOYMENT_THRESHOLD => deployment_threshold,
                 ARG_KEY_MANAGEMENT_THRESHOLD => key_management_threshold,
                 ARG_ACCOUNTS => accounts,
-                ARG_WEIGHTS => weights
+                ARG_WEIGHTS => bytes
             },
         );
     }
@@ -191,16 +192,11 @@ fn set_all_test(){
     let mut context = Context::new();
     context.deploy_keys_manager();
 
-    let mut args =  RuntimeArgs::new();
-    args.insert(ARG_WEIGHTS, [1,2,3]).expect("error when adding weights argument");
-    args.insert(ARG_ACCOUNTS, vec![context.user.clone(),context.ali.clone(),context.bob.clone()]).expect( "error when adding accounts argument");
-    args.insert(ARG_DEPLOYMENT_THRESHOLD, 2).expect("error when adding deploy threshold argument");
-    args.insert(ARG_KEY_MANAGEMENT_THRESHOLD, 3).expect("error when adding key_management threshold argument");
-
     let signers:Vec<PublicKey> =  [context.user.clone()].into();
-    context.call_keys_manager(
-        signers,
-        "set_all",
-        args
+    context.set_all(signers, 
+        1u8, 
+        1u8, 
+        vec![context.user.clone(), context.ali.clone()], 
+        vec![1, 1]
     );
 }
