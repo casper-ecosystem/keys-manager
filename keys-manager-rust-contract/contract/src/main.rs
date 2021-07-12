@@ -19,7 +19,7 @@ pub const ARG_ACCOUNT: &str = "account";
 pub const ARG_WEIGHT: &str = "weight";
 pub const ARG_ACCOUNTS: &str = "accounts";
 pub const ARG_WEIGHTS: &str = "weights";
-pub const ARG_DEPLOYMENT_THRESHOLD: &str = "deployment_thereshold";
+pub const ARG_DEPLOYMENT_THRESHOLD: &str = "deployment_threshold";
 pub const ARG_KEY_MANAGEMENT_THRESHOLD: &str = "key_management_threshold";
 
 #[no_mangle]
@@ -45,7 +45,9 @@ pub extern "C" fn set_key_management_threshold() {
 
 #[no_mangle]
 pub extern "C" fn set_all() {
-    let deployment_thereshold: Weight =
+
+    println!("------------------------bere-------------------------");
+    let deployment_threshold: Weight =
         Weight::new(runtime::get_named_arg(ARG_DEPLOYMENT_THRESHOLD));
     let key_management_threshold: Weight =
         Weight::new(runtime::get_named_arg(ARG_KEY_MANAGEMENT_THRESHOLD));
@@ -55,8 +57,9 @@ pub extern "C" fn set_all() {
     for (account, weight) in accounts.into_iter().zip(weights) {
         update_key_weight(account.to_account_hash(), weight);
     }
+
     set_threshold(ActionType::KeyManagement, key_management_threshold).unwrap_or_revert();
-    set_threshold(ActionType::Deployment, deployment_thereshold).unwrap_or_revert();
+    set_threshold(ActionType::Deployment, deployment_threshold).unwrap_or_revert();
 }
 
 #[no_mangle]

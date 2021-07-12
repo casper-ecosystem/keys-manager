@@ -2,3 +2,7 @@
 client/node_modules
 client/package-lock.json
 contract/Cargo.lock
+
+keys-manager-rust-contract/tests/wasm/*.wasm
+keys-manager-as/dist/*.wasm
+keys-manager-as/node_modules
