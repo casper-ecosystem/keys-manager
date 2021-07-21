@@ -114,6 +114,7 @@ impl Context {
 #[test]
 fn test_default_setup() {
     let mut context = Context::new();
+    //User key_weight = 1 and deploy_threshold=1 so user should be able to deply the test contract.
     context.deploy_test_contract(vec![context.user.clone()]);
 }
 
@@ -121,6 +122,7 @@ fn test_default_setup() {
 #[should_panic]
 fn wrong_signer_test() {
     let mut context = Context::new();
+    //Only user is associated with the account. Therefore ali cannot deploy the test contract.
     context.deploy_test_contract(vec![context.ali.clone()]);
 }
 
@@ -128,46 +130,36 @@ fn wrong_signer_test() {
 fn test_add_key() {
     let mut context = Context::new();
     context.deploy_keys_manager();
+    //If we set the key_weight of ali to one under the hood we add ali to the associated keys and with weight 1.
+    //Therefore ali should now be able to deploy the test-contract.
     context.set_key_weight(context.ali.clone(), 1, vec![context.user.clone()]);
     context.deploy_test_contract(vec![context.ali.clone()]);
 }
 
 #[test]
-fn set_weight_test(){
+fn test_increase_weight() {
     let mut context = Context::new();
     context.deploy_keys_manager();
+    //If we set the key_weight of ali to one under the hood we add ali to the associated keys and with weight 1.
+    //THerefore ali should now be able to deploy the test-contract.
     context.set_key_weight(context.user.clone(), 2, vec![context.user.clone()]);
-    context.set_key_management_threshold(context.user.clone(), 2, vec![context.user.clone()]);
 }
 
 #[test]
-fn set_deployment_threshold(){
+fn set_deploy_threshold_to_zero() {
     let mut context = Context::new();
     context.deploy_keys_manager();
-    context.set_key_weight(context.ali.clone(), 1, vec![context.user.clone()]);
-    context.set_key_weight(context.ali.clone(), 2, vec![context.user.clone()]);
-
+    //If we set the key_weight of ali to one under the hood we add ali to the associated keys and with weight 1.
+    //Therefore ali should now be able to deploy the test-contract.
+    context.set_deployment_threshold(context.user.clone(), 0, vec![context.user.clone()]);
 }
-
-
-#[test]
-#[should_panic]
-fn deployment_threshold_should_not_be_greater_than_key_management_threshold(){
-    let mut context = Context::new();
-    context.deploy_keys_manager();
-    // By default both key_management and deploy thresholds are initialized to 1. Since a key_management action
-    // is also a deploy action the deployment threshold should not be greater than the key_management threshold.
-    // By setting the deployment threshold to 2 (which is greater than the initial key management threshold = 1 )
-    context.set_deployment_threshold(context.user.clone(), 2, vec![context.user.clone()]);
-}
-
 
 #[test]
 fn set_key_management_threshold(){
     let mut context = Context::new();
     context.deploy_keys_manager();
-    context.set_key_weight(context.ali.clone(), 1, vec![context.user.clone()]);
     context.set_key_weight(context.ali.clone(), 2, vec![context.user.clone()]);
+    context.set_key_management_threshold(context.user.clone(), 2, vec![context.ali.clone()]);
 }
 
 #[test]
@@ -185,10 +177,39 @@ fn key_management_threshold_should_not_be_greater_than_sum_of_weights(){
     context.set_key_management_threshold(context.user.clone(), 5, vec![context.user.clone()]);
 }
 
+#[test]
+fn set_deployment_threshold() {
+    let mut context = Context::new();
+    context.deploy_keys_manager();
+    context.set_key_weight(context.user.clone(), 2, vec![context.user.clone()]);
+    context.set_key_management_threshold(context.user.clone(), 2, vec![context.user.clone()]);
+    context.set_deployment_threshold(context.user.clone(), 2, vec![context.user.clone()]);
+}
+
+#[test]
+#[should_panic]
+fn deployment_threshold_should_not_be_greater_than_key_management_threshold(){
+    let mut context = Context::new();
+    context.deploy_keys_manager();
+    // By default both key_management and deploy thresholds are initialized to 1. Since a key_management action
+    // is also a deploy action the deployment threshold should not be greater than the key_management threshold.
+    // By setting the deployment threshold to 2 (which is greater than the initial key management threshold = 1 )
+    context.set_deployment_threshold(context.user.clone(), 2, vec![context.user.clone()]);
+}
+
+#[test]
+fn set_weight_test(){
+    let mut context = Context::new();
+    context.deploy_keys_manager();
+    context.set_key_weight(context.user.clone(), 2, vec![context.user.clone()]);
+    context.set_key_weight(context.ali.clone(), 1, vec![context.user.clone()]);
+    context.set_key_management_threshold(context.user.clone(), 3, vec![context.user.clone(),context.ali.clone()]);
+    context.set_deployment_threshold(context.user.clone(), 3, vec![context.user.clone(),context.ali.clone()]);
+    context.deploy_test_contract(vec![context.user.clone(),context.ali.clone()]);
+}
 
 #[test]
 fn set_all_test(){
-    
     let mut context = Context::new();
     context.deploy_keys_manager();
 
