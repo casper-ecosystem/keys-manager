@@ -115,8 +115,8 @@ fn update_key_weight(account: AccountHash, weight: Weight) {
 fn set_threshold(permission_level: ActionType, threshold: Weight) -> Result<(), Error> {
     match account::set_action_threshold(permission_level, threshold) {
         Ok(()) => Ok(()),
-        Err(SetThresholdFailure::KeyManagementThreshold) => Err(Error::KeyManagementThresholdError),
-        Err(SetThresholdFailure::DeploymentThreshold) => Err(Error::DeploymentThresholdError),
+        Err(SetThresholdFailure::KeyManagementThreshold) => Err(Error::KeyManagementThreshold),
+        Err(SetThresholdFailure::DeploymentThreshold) => Err(Error::DeploymentThreshold),
         Err(SetThresholdFailure::PermissionDeniedError) => Err(Error::PermissionDenied),
         Err(SetThresholdFailure::InsufficientTotalWeight) => Err(Error::InsufficientTotalWeight),
     }
