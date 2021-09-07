@@ -1,60 +1,89 @@
 # Casper Keys Manager
 
-Full instructions for first-time contributors are found in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/multi-sig/index.html).
+First-time contributors can find complete instructions in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/multi-sig/index.html).
 
-The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool). 
+The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
 
-## Install
+## Installing the contract and client
+
+The JS client code expects a compiled WASM file in the ``contract`` folder and a local network called ``casper-net-1``. 
 
 ### Set up the Rust toolchain
-You need the Rust toolchain to develop smart contracts.
+
+You need the Rust toolchain to run the keys manager (or any other Casper smart contracts).
+
 ```bash
-$ rustup install $(cat rust-toolchain)
-$ rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
+ rustup install $(cat rust-toolchain)
+ rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
 ```
 
-### Compile Account Code (Smart Contracts)
-Create a WASM file that will be used by the JS client.
+### Compile the Smart Contracts
+
+To compile the WASM file, use these commands:
+
 ```bash
-$ cd contract
-$ cargo build --release
+ cd contract
+ cargo build --release
 ```
 
-## Prepare the local `nctl` network
-1. Set up [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl)
+### Prepare a local `nctl` network
+Set up [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) to interact and deploy to a local network.
 
-## Running prepared client-scenarios
+### Environment configuration
 
-### Installation
+You need to set certain environment variables in an `.env` file in the `client` folder. 
 
-Just run `npm i` in `./client`.
+You need to set the minimum configuration for your client to communicate with the network:
 
-### Env configuration
+- The ``BASE_KEY_PATH`` for the absolute path to your faucet account
+- The ``NODE_URL`` for the first node in your local network 
 
-Environment variables needs to be set in `.env` file in `./client`.
+Your ``.env`` file will look like this (where <ENTER_YOUR_PATH> stores your local path):
 
-```
-BASE_KEY_PATH=... # absolute path to keys directory
-NODE_URL=... # optional, defaults to standard NCTL address http://localhost:40101/rpc
-WASM_PATH=... # optional, defaults to ../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm
-NETWORK_NAME=... # optional, defaults to casper-net-1
-FUND_AMOUNT=10000000000000 # defaults to 10000000000000 = 10000CSPR
-PAYMENT_AMOUNT=100000000000 # defaults to 100000000000 = 100CSPR
-TRANSFER_AMOUNT=2500000000 # defaults to 2500000000 = 2.5CSPR
+```bash
+ BASE_KEY_PATH=<ENTER_YOUR_PATH>/casper-node/utils/nctl/assets/net-1/faucet/
+ NODE_URL=http://localhost:11101/rpc
 ```
 
-You can also run run both scripts providing custom `.env` path by running 
+If you want to customize your setup further, you can set other optional environment variables described below.
 
-`npm run start:atomic dotenv_config_path=./example-env-file`
+```bash
+ WASM_PATH=... # optional, defaults to ../contract/target/wasm32-unknown-unknown/release/keys-manager.wasm
+ NETWORK_NAME=... # optional, defaults to casper-net-1
+ FUND_AMOUNT=10000000000000 # defaults to 10000000000000 = 10000CSPR
+ PAYMENT_AMOUNT=100000000000 # defaults to 100000000000 = 100CSPR
+ TRANSFER_AMOUNT=2500000000 # defaults to 2500000000 = 2.5CSPR
+```
 
-### Set-all 
+You can also provide a custom `.env` path by running this command:
 
-`npm run start:all`
+```bash
+ npm run start:atomic dotenv_config_path=./example-env-file
+```
 
-### Step-by-step
+### Client installation
 
-`npm run start:atomic`
+To install the client, run `npm install` in the `client` folder.
+
+```bash
+ cd client
+ npm install
+```
+
+### Running prepared scenarios
+
+You will run an example scenario with the following command where three additional accounts will be added to the main account. You will need two out of four accounts to perform a deploy. You will need three out of four accounts to add a new account. Run this command to try out this example:
+
+```bash
+ npm run start:all
+```
+
+In a second example scenario, two additional accounts will be added to the main account to perform deploys, but they will not be able to add another account. Run this command for this example:
+
+```bash
+ npm run start:atomic
+```
 
 ### Interactive mode
 
-To run a script in interactive mode just add `interactive` to the above commands.
+To run a script in interactive mode, just add `interactive` to the above commands.
