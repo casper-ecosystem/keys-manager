@@ -4,7 +4,7 @@ const TRANSFER_AMOUNT = process.env.TRANSFER_AMOUNT || 2500000000;
 (async function () {
 
     // In this example the 3 additional accounts will be added to 
-    // the mainAccount but two out of four witll be needed to perform the deploy
+    // the mainAccount but two out of four will be needed to perform the deploy
     // and three out of four to add new account.
     
     // To achive the task, we will:
