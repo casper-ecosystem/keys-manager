@@ -5,8 +5,8 @@ authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-casper-contract = "1.2.0"
-casper-types = "1.2.0"
+casper-contract = { version = "1.4.0", default-features = false }
+casper-types = { version = "1.4.0", default-features = false }
 
 [[bin]]
 name = "keys-manager"
@@ -16,7 +16,8 @@ doctest = false
 test = false
 
 [features]
-default = ["casper-contract/std", "casper-types/std", "casper-contract/test-support"]
+default = ["std"]
+std = ["casper-contract/std", "casper-types/std"]
 
 [profile.release]
 lto = true
