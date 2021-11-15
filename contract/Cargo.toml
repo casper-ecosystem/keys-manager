@@ -3,7 +3,7 @@ cargo-features = ["edition2021"]
 [package]
 name = "keys-manager"
 version = "0.2.0"
-authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
+authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>", "Matthew Doty <matthew.wampler.doty@gmail.com>"]
 edition = "2021"
 
 [dependencies]
