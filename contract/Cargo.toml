@@ -1,8 +1,10 @@
+cargo-features = ["edition2021"]
+
 [package]
 name = "keys-manager"
 version = "0.2.0"
 authors = ["Maciej Zielinski <maciek.s.zielinski@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 casper-contract = { version = "1.4.0", default-features = false }
