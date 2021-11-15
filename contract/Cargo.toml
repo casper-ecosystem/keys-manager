@@ -16,8 +16,9 @@ doctest = false
 test = false
 
 [features]
-default = ["std"]
-std = ["casper-contract/std", "casper-types/std"]
+default = ["wee-alloc"]
+wee-alloc = ["casper-contract/no-std-helpers"]
 
 [profile.release]
+codegen-units = 1
 lto = true

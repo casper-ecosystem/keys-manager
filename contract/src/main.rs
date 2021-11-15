@@ -1,4 +1,9 @@
 #![no_main]
+#![no_std]
+
+extern crate alloc;
+
+use alloc::{boxed::Box, string::String, vec, vec::Vec};
 
 use casper_contract::{
     contract_api::{account, runtime, storage},
