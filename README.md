@@ -2,28 +2,20 @@
 
 First-time contributors can find complete instructions in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/multi-sig/index.html).
 
-The steps below are a quick start if you have already set up your [develoment environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
+The steps below are a quick start if you have already set up your [development environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
 
 ## Installing the contract and client
 
 The JS client code expects a compiled WASM file in the ``contract`` folder and a local network called ``casper-net-1``. 
 
-### Set up the Rust toolchain
-
-You need the Rust toolchain to run the keys manager (or any other Casper smart contracts).
-
-```bash
- rustup install $(cat rust-toolchain)
- rustup target add --toolchain $(cat rust-toolchain) wasm32-unknown-unknown
-```
-
-### Compile the Smart Contracts
+### Compile the smart contract
 
 To compile the WASM file, use these commands:
 
 ```bash
- cd contract
- cargo build --release
+cd keys-manager
+make prepare
+make build-contract
 ```
 
 ### Prepare a local `nctl` network
@@ -38,7 +30,7 @@ You need to set the minimum configuration for your client to communicate with th
 - The ``BASE_KEY_PATH`` for the absolute path to your faucet account
 - The ``NODE_URL`` for the first node in your local network 
 
-Your ``.env`` file will look like this (where <ENTER_YOUR_PATH> stores your local path):
+Your ``.env`` file will look like this (replace <ENTER_YOUR_PATH> with the absolute path of your local drive, because the relative path does not work in this context):
 
 ```bash
  BASE_KEY_PATH=<ENTER_YOUR_PATH>/casper-node/utils/nctl/assets/net-1/faucet/
