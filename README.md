@@ -2,7 +2,7 @@
 
 First-time contributors can find complete instructions in the [Multi-Signature Tutorial](https://docs.casperlabs.io/en/latest/dapp-dev-guide/tutorials/multi-sig/index.html).
 
-The steps below are a quick start if you have already set up your [development environment](https://docs.casperlabs.io/en/latest/dapp-dev-guide/setup-of-rust-contract-sdk.html), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
+The steps below are a quick start if you have already set up your [development environment](https://docs.casperlabs.io/dapp-dev-guide/writing-contracts/getting-started/#development-environment-setup), the [casper node](https://github.com/CasperLabs/casper-node), and the [nctl](https://github.com/CasperLabs/casper-node/tree/master/utils/nctl) testing tool. 
 
 ## Installing the contract and client
 
